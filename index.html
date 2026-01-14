@@ -4,106 +4,543 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tirage Golf</title>
+
   <style>
-    body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; margin: 20px; max-width: 1040px; }
-    h1 { margin: 0 0 8px; }
-    .sub { color: #555; margin-bottom: 18px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 12px; }
-    .controls { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 16px; }
-    button { padding: 10px 12px; border-radius: 10px; border: 1px solid #ccc; background: #f6f6f6; cursor: pointer; }
-    button.primary { background: #111; color: #fff; border-color: #111; }
-    button:active { transform: translateY(1px); }
-    textarea { width: 100%; min-height: 150px; border-radius: 10px; border: 1px solid #ddd; padding: 10px; }
-    select, input[type="time"] { padding: 8px 10px; border-radius: 10px; border: 1px solid #ddd; background: #fff; }
-    .pill { display: inline-block; padding: 2px 10px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; color: #444; }
-    .warn { color: #9a4b00; }
-    .ok { color: #0a6b2f; }
-    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .small { font-size: 12px; color: #666; }
-    .group { margin: 8px 0; }
-    .sectionTitle { font-weight: 700; margin: 4px 0 10px; }
-    .muted { color:#666; }
-    .divider { height:1px; background:#eee; margin:12px 0; }
-    label.inline { display:flex; gap:8px; align-items:center; }
-    .field { display:flex; gap:8px; align-items:center; }
+    :root{
+      /* Golf palette (sobre) */
+      --bg: #0b2018;            /* vert très sombre (fond) */
+      --surface: #0f2a20;       /* vert sombre (cartes) */
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.09);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+
+      --accent: #2dd4a6;        /* vert menthe */
+      --accent2: #a3f7d8;       /* menthe clair */
+      --danger: #ffb020;        /* warning */
+      --ok: #2dd4a6;
+
+      --shadow: 0 10px 30px rgba(0,0,0,.28);
+      --radius: 16px;
+      --radius2: 12px;
+
+      --tap: 48px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 30% -10%, rgba(45,212,166,.20), transparent 55%),
+        radial-gradient(900px 500px at 110% 20%, rgba(163,247,216,.10), transparent 45%),
+        linear-gradient(180deg, #081a13, var(--bg));
+      color: var(--text);
+      font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.35;
+    }
+
+    .wrap{
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 18px 14px 120px;
+    }
+
+    /* Header */
+    .header{
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 6px 0 14px;
+    }
+    h1{
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 72ch;
+    }
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+    .dot{
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(255,176,32,.14);
+    }
+    .dot.ok{
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(45,212,166,.14);
+    }
+
+    /* Layout cards */
+    .grid2{
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+    @media (max-width: 980px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panelHead{
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+    .panelTitle{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .panelTitle strong{
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+    .panelBody{
+      padding: 14px;
+    }
+
+    /* Actions bar (mobile-first) */
+    .actions{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .actions .row2{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 981px){
+      .actions{ grid-template-columns: 1fr; }
+      .actions .row2{ grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .btn{
+      height: var(--tap);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight: 650;
+      letter-spacing: .2px;
+      padding: 0 14px;
+      cursor: pointer;
+      transition: transform .05s ease, background .15s ease, border-color .15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      user-select: none;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(45,212,166,.95), rgba(163,247,216,.55));
+      border-color: rgba(45,212,166,.35);
+      color: #042015;
+      box-shadow: 0 10px 28px rgba(45,212,166,.18);
+    }
+    .btn.ghost{
+      background: transparent;
+      border-color: rgba(255,255,255,.14);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .fieldRow{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (min-width: 981px){
+      .fieldRow{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .field{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+    }
+    .field label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+    input[type="time"], select{
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(10,24,18,.45);
+      color: var(--text);
+      padding: 0 10px;
+      outline: none;
+      width: 150px;
+    }
+    select{ width: 160px; }
+
+    .hint{
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 6px;
+    }
+
+    /* Collapsible sections */
+    details{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    summary{
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 12px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 750;
+      letter-spacing: .2px;
+      color: var(--text);
+      user-select: none;
+    }
+    summary::-webkit-details-marker{ display:none; }
+    .chev{
+      width: 10px; height: 10px;
+      border-right: 2px solid rgba(255,255,255,.65);
+      border-bottom: 2px solid rgba(255,255,255,.65);
+      transform: rotate(-45deg);
+      transition: transform .18s ease;
+      margin-right: 2px;
+    }
+    details[open] .chev{ transform: rotate(45deg); }
+
+    .sectionBody{
+      padding: 10px 12px 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Player tiles */
+    .playersGrid{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (min-width: 520px){
+      .playersGrid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 981px){
+      .playersGrid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .tile{
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      padding: 10px 10px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 44px;
+    }
+
+    .name{
+      font-weight: 750;
+      letter-spacing: .3px;
+      font-size: 13px;
+    }
+
+    .toggle{
+      width: 44px;
+      height: 26px;
+      border-radius: 999px;
+      position: relative;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      flex: 0 0 auto;
+    }
+    .toggle::after{
+      content:"";
+      position:absolute;
+      top: 50%;
+      left: 3px;
+      width: 20px; height: 20px;
+      border-radius: 999px;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,.75);
+      transition: left .16s ease, background .16s ease;
+      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+    }
+    input[type="checkbox"].cb{
+      display:none;
+    }
+    input[type="checkbox"].cb:checked + .toggle{
+      border-color: rgba(45,212,166,.35);
+      background: rgba(45,212,166,.22);
+    }
+    input[type="checkbox"].cb:checked + .toggle::after{
+      left: 21px;
+      background: var(--accent2);
+    }
+
+    /* Result */
+    .status{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .status.ok{ color: var(--accent2); }
+    .status.warn{ color: #ffcc7a; }
+
+    .resultList{
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .resultItem{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+    }
+    .timeBadge{
+      min-width: 64px;
+      text-align:center;
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(45,212,166,.14);
+      border: 1px solid rgba(45,212,166,.25);
+      color: var(--accent2);
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+    .playersLine{
+      font-weight: 650;
+      color: var(--text);
+      letter-spacing: .1px;
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    textarea{
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(10,24,18,.35);
+      color: var(--text);
+      padding: 12px;
+      outline: none;
+      resize: vertical;
+      min-height: 160px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* Sticky bottom bar (mobile) */
+    .stickyBar{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      padding: 10px 12px 12px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.55));
+      backdrop-filter: blur(10px);
+    }
+    .stickyInner{
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 10px;
+    }
+    @media (min-width: 981px){
+      .stickyBar{ display:none; }
+    }
+
+    .miniBtn{
+      height: 50px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      font-weight: 750;
+      letter-spacing: .2px;
+      cursor: pointer;
+    }
+    .miniBtn.primary{
+      background: linear-gradient(135deg, rgba(45,212,166,.95), rgba(163,247,216,.55));
+      border-color: rgba(45,212,166,.35);
+      color: #042015;
+    }
   </style>
 </head>
+
 <body>
-  <h1>Tirage Golf</h1>
-  <div class="sub">
-    Coche les présents → Générer. Règle fixe : <strong>groupes de 3 d’abord</strong>, puis <strong>groupes de 4 à la fin</strong>.
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <span class="pill" id="countPill">0 présents</span>
-      <span class="small">Les coches et l’horaire sont mémorisés sur ce Mac.</span>
-    </div>
-
-    <div class="controls">
-      <button class="primary" id="btnGenerate">Générer</button>
-      <button id="btnRegenerate">Regénérer (nouvel aléa)</button>
-      <button id="btnAllPlayers">Tout cocher (joueurs)</button>
-      <button id="btnNoneAll">Tout décocher</button>
-      <button id="btnCopy">Copier pour WhatsApp</button>
-
-      <span class="field small" style="margin-left:auto;">
-        <strong>1er départ</strong>
-        <input type="time" id="startTime" />
-        <span class="muted">(puis +8 min)</span>
-      </span>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <div class="sectionTitle">Options (facultatives)</div>
-      <div class="row">
-        <span class="small"><strong>Forcer une paire</strong> :</span>
-        <select id="pairA"></select>
-        <select id="pairB"></select>
-
-        <label class="inline small">
-          <input type="checkbox" id="pairLast" />
-          Mettre la paire dans la <strong>dernière partie</strong> (tout en gardant les plus nombreux à la fin)
-        </label>
-
-        <button id="btnClearPair">Désactiver</button>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1>Tirage Golf</h1>
+        <div class="subtitle">
+          Sélectionne les présents, renseigne le 1er départ, puis génère. Les groupes de 4 sont toujours en fin de liste.
+        </div>
       </div>
-      <div class="small muted" style="margin-top:6px;">
-        Si “dernière partie” est coché : la paire ira dans le <strong>dernier groupe de 4</strong> s’il y en a, sinon dans le <strong>dernier groupe de 3</strong>.
+      <div class="pill" id="countPill">
+        <span class="dot" id="countDot"></span>
+        <span id="countText">0 présents</span>
       </div>
     </div>
 
-    <div class="divider"></div>
+    <div class="grid2">
+      <!-- Left: Selection & options -->
+      <section class="panel">
+        <div class="panelHead">
+          <div class="panelTitle">
+            <strong>Sélection</strong>
+            <span class="status" id="smallNote">Coches mémorisées sur cet appareil</span>
+          </div>
 
-    <div class="sectionTitle">Joueurs</div>
-    <div class="grid" id="playersGrid"></div>
+          <div class="actions">
+            <button class="btn primary" id="btnGenerate">Générer</button>
 
-    <div class="sectionTitle" style="margin-top:16px;">Invités</div>
-    <div class="grid" id="guestsGrid"></div>
+            <div class="row2">
+              <button class="btn" id="btnRegenerate">Regénérer</button>
+              <button class="btn ghost" id="btnAllPlayers">Tout cocher</button>
+              <button class="btn ghost" id="btnNoneAll">Tout décocher</button>
+            </div>
+          </div>
+
+          <div class="fieldRow">
+            <div class="field">
+              <label for="startTime">1er départ</label>
+              <input type="time" id="startTime" />
+            </div>
+            <div class="field">
+              <label>Intervalle</label>
+              <div style="font-weight:800; color:var(--accent2)">+8 min</div>
+            </div>
+          </div>
+          <div class="hint">Le message WhatsApp affichera uniquement les horaires et les joueurs.</div>
+        </div>
+
+        <div class="panelBody">
+          <details open>
+            <summary>
+              Joueurs
+              <span class="chev"></span>
+            </summary>
+            <div class="sectionBody">
+              <div class="playersGrid" id="playersGrid"></div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Invités
+              <span class="chev"></span>
+            </summary>
+            <div class="sectionBody">
+              <div class="playersGrid" id="guestsGrid"></div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Options
+              <span class="chev"></span>
+            </summary>
+            <div class="sectionBody">
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <select id="pairA"></select>
+                <select id="pairB"></select>
+
+                <label class="inline" style="font-size:12px; color:var(--muted);">
+                  <input type="checkbox" id="pairLast" />
+                  Paire en dernière partie (en respectant 4 à la fin)
+                </label>
+
+                <button class="btn ghost" id="btnClearPair" style="height:40px;">Désactiver</button>
+              </div>
+              <div class="hint">
+                Si des groupes de 4 existent, la paire ira dans le dernier 4 ; sinon dans le dernier 3.
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Right: Results & WhatsApp -->
+      <section class="panel">
+        <div class="panelHead">
+          <div class="panelTitle">
+            <strong>Résultat</strong>
+            <span class="status" id="status">Prêt</span>
+          </div>
+          <div class="actions" style="margin-top:10px;">
+            <button class="btn primary" id="btnCopy">Copier WhatsApp</button>
+          </div>
+        </div>
+
+        <div class="panelBody">
+          <div class="resultList" id="result"></div>
+
+          <div style="margin-top:14px; font-weight:800; letter-spacing:.2px;">Texte WhatsApp</div>
+          <div class="hint" style="margin-bottom:8px;">Colle tel quel dans WhatsApp.</div>
+          <textarea id="waText" readonly></textarea>
+        </div>
+      </section>
+    </div>
   </div>
 
-  <div class="card" style="margin-top: 14px;">
-    <div class="row" style="justify-content: space-between;">
-      <strong>Résultat</strong>
-      <span id="status" class="small"></span>
-    </div>
-    <div id="result"></div>
-
-    <div style="margin-top: 10px;">
-      <strong>Texte WhatsApp</strong>
-      <textarea id="waText" readonly></textarea>
+  <!-- Sticky bar for iPhone -->
+  <div class="stickyBar">
+    <div class="stickyInner">
+      <button class="miniBtn primary" id="btnGenerateSticky">Générer</button>
+      <button class="miniBtn" id="btnCopySticky">Copier WhatsApp</button>
     </div>
   </div>
 
 <script>
-  // === 1) Liste fixe des 20 joueurs ===
+  // === Données ===
   const players = [
     "RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG",
     "JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"
   ];
-
-  // === 2) Invités ===
   const guests = ["INV1","INV2","INV3"];
 
   const STORAGE_KEY = "tirage_golf_presence_v4";
@@ -112,17 +549,12 @@
   const INTERVAL_MIN = 8;
 
   function loadJSON(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return fallback;
-      return JSON.parse(raw);
-    } catch { return fallback; }
+    try { return JSON.parse(localStorage.getItem(key) || "") ?? fallback; }
+    catch { return fallback; }
   }
-  function saveJSON(key, obj) {
-    localStorage.setItem(key, JSON.stringify(obj));
-  }
+  function saveJSON(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
 
-  // Fisher–Yates shuffle
+  // Shuffle Fisher–Yates
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -161,27 +593,22 @@
     return { a, b, last };
   }
 
-  // Règle paire + respect strict "plus nombreux à la fin"
+  // Paires + respect strict "plus nombreux à la fin"
   function makeGroups(presentList, forcedPair) {
     const n = presentList.length;
     const sizes = groupSizes(n);
 
     let pool = shuffle(presentList);
 
-    // Pair applicable ?
     let pair = null;
     if (forcedPair && pool.includes(forcedPair.a) && pool.includes(forcedPair.b)) {
       pair = forcedPair;
       pool = pool.filter(x => x !== pair.a && x !== pair.b);
     }
 
-    // Si paire, on choisit taille cible : 4 si on a des 4, sinon 3
     let targetSize = null;
     if (pair) targetSize = sizes.includes(4) ? 4 : 3;
 
-    // Index cible :
-    // - last=true => dernier groupe de taille targetSize (donc dernier 4 si existe, sinon dernier 3)
-    // - last=false => premier groupe de taille targetSize
     let targetIndex = -1;
     if (pair) {
       if (pair.last) {
@@ -222,9 +649,8 @@
     return groups;
   }
 
-  // === Gestion des horaires ===
+  // Horaires
   function parseTimeHHMM(s) {
-    // s attendu: "HH:MM"
     if (!s || typeof s !== "string") return null;
     const m = s.match(/^(\d{2}):(\d{2})$/);
     if (!m) return null;
@@ -232,74 +658,74 @@
     if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
     return { hh, mm };
   }
-
   function addMinutes(t, minutesToAdd) {
     const total = (t.hh * 60 + t.mm + minutesToAdd) % (24 * 60);
-    const hh = Math.floor(total / 60);
-    const mm = total % 60;
-    return { hh, mm };
+    return { hh: Math.floor(total / 60), mm: total % 60 };
   }
-
   function formatHHMM(t) {
-    const hh = String(t.hh).padStart(2, "0");
-    const mm = String(t.mm).padStart(2, "0");
-    return `${hh}:${mm}`;
+    return `${String(t.hh).padStart(2,"0")}:${String(t.mm).padStart(2,"0")}`;
   }
-
   function buildTeeTimes(startHHMM, count, intervalMin) {
     const start = parseTimeHHMM(startHHMM);
     if (!start) return null;
     const times = [];
-    for (let i = 0; i < count; i++) {
-      times.push(formatHHMM(addMinutes(start, i * intervalMin)));
-    }
+    for (let i = 0; i < count; i++) times.push(formatHHMM(addMinutes(start, i * intervalMin)));
     return times;
   }
 
-  // WhatsApp : horaires + liste joueurs, sans G1, sans taille, sans en-têtes
+  // WhatsApp : horaires + joueurs uniquement
   function formatWA(groups, startTimeHHMM) {
     const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
     if (!times) throw new Error("Renseigne un 1er départ valide (format HH:MM).");
-
-    const lines = [];
-    groups.forEach((g, i) => {
-      lines.push(`${times[i]} : ${g.join(" / ")}`);
-    });
-    return lines.join("\n");
+    return groups.map((g, i) => `${times[i]} : ${g.join(" / ")}`).join("\n");
   }
 
   // === UI ===
   const playersGrid = document.getElementById("playersGrid");
   const guestsGrid = document.getElementById("guestsGrid");
-  const countPill = document.getElementById("countPill");
   const status = document.getElementById("status");
   const result = document.getElementById("result");
   const waText = document.getElementById("waText");
   const startTimeInput = document.getElementById("startTime");
 
+  const countText = document.getElementById("countText");
+  const countDot = document.getElementById("countDot");
+
   let presence = loadJSON(STORAGE_KEY, {});
 
-  function savePresence() {
-    saveJSON(STORAGE_KEY, presence);
-  }
+  function savePresence() { saveJSON(STORAGE_KEY, presence); }
 
-  function renderGrid(names, container, prefix) {
+  function renderTiles(names, container, prefix) {
     container.innerHTML = "";
     names.forEach(name => {
       const key = `${prefix}:${name}`;
-      const id = `${prefix}_` + name.replace(/\s+/g, "_");
-      const div = document.createElement("div");
-      div.className = "card";
-      div.innerHTML = `
-        <label style="display:flex; gap:10px; align-items:center;">
-          <input type="checkbox" id="${id}" ${presence[key] ? "checked" : ""} />
-          <span>${name}</span>
+      const id = `${prefix}_${name.replace(/\s+/g,"_")}`;
+
+      const tile = document.createElement("div");
+      tile.className = "tile";
+
+      tile.innerHTML = `
+        <div class="name">${name}</div>
+        <label style="display:flex; align-items:center; gap:10px;">
+          <input class="cb" type="checkbox" id="${id}" ${presence[key] ? "checked" : ""} />
+          <span class="toggle" aria-hidden="true"></span>
         </label>
       `;
-      container.appendChild(div);
 
-      div.querySelector("input").addEventListener("change", (e) => {
+      container.appendChild(tile);
+
+      tile.querySelector("input").addEventListener("change", (e) => {
         presence[key] = e.target.checked;
+        savePresence();
+        updateCount();
+      });
+
+      // Tap anywhere on tile toggles checkbox (mobile friendly)
+      tile.addEventListener("click", (ev) => {
+        if (ev.target && (ev.target.tagName === "INPUT" || ev.target.classList.contains("toggle"))) return;
+        const cb = tile.querySelector("input");
+        cb.checked = !cb.checked;
+        presence[key] = cb.checked;
         savePresence();
         updateCount();
       });
@@ -314,28 +740,14 @@
 
   function updateCount() {
     const n = getPresentList().length;
-    countPill.textContent = `${n} présents`;
-    countPill.className = "pill " + (n >= 3 ? "ok" : "warn");
-  }
-
-  function renderResult(groups, startTimeHHMM) {
-    result.innerHTML = "";
-
-    const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
-    groups.forEach((g, i) => {
-      const div = document.createElement("div");
-      div.className = "group";
-      const label = times ? times[i] : `Départ ${i+1}`;
-      div.innerHTML = `<strong>${label}</strong> : ${g.join(" / ")}`;
-      result.appendChild(div);
-    });
+    countText.textContent = `${n} présents`;
+    countDot.className = "dot " + (n >= 3 ? "ok" : "");
   }
 
   function fillPairSelectors() {
     const all = [...players, ...guests];
     const selA = document.getElementById("pairA");
     const selB = document.getElementById("pairB");
-    if (!selA || !selB) return;
 
     const opts = ["(aucun)", ...all];
     const html = opts.map(v => `<option value="${v === "(aucun)" ? "" : v}">${v}</option>`).join("");
@@ -355,12 +767,32 @@
 
   function loadStartTime() {
     const saved = localStorage.getItem(TIME_KEY);
-    if (saved) startTimeInput.value = saved;
-    else startTimeInput.value = "08:00"; // défaut raisonnable
+    startTimeInput.value = saved || "08:00";
   }
-
   function persistStartTime() {
     if (startTimeInput.value) localStorage.setItem(TIME_KEY, startTimeInput.value);
+  }
+
+  function renderResult(groups, startTimeHHMM) {
+    result.innerHTML = "";
+    const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
+
+    groups.forEach((g, i) => {
+      const item = document.createElement("div");
+      item.className = "resultItem";
+      const badge = times ? times[i] : `#${i+1}`;
+
+      item.innerHTML = `
+        <div class="timeBadge">${badge}</div>
+        <div class="playersLine">${g.join(" / ")}</div>
+      `;
+      result.appendChild(item);
+    });
+  }
+
+  function setStatus(text, kind){
+    status.textContent = text;
+    status.className = "status " + (kind || "");
   }
 
   function generate() {
@@ -371,24 +803,28 @@
       persistStartTime();
 
       const groups = makeGroups(presentList, forcedPair);
-
-      // Affichage résultat (avec horaires si possible)
       renderResult(groups, startTimeInput.value);
-
-      // WhatsApp avec horaires uniquement
       waText.value = formatWA(groups, startTimeInput.value);
 
-      status.textContent = "OK";
-      status.className = "small ok";
+      setStatus("OK", "ok");
     } catch (e) {
       result.innerHTML = "";
       waText.value = "";
-      status.textContent = e.message;
-      status.className = "small warn";
+      setStatus(e.message, "warn");
     }
   }
 
-  // Boutons
+  async function copyWA(){
+    if (!waText.value) return;
+    try {
+      await navigator.clipboard.writeText(waText.value);
+      setStatus("Copié", "ok");
+    } catch {
+      setStatus("Copie impossible. Copie manuelle.", "warn");
+    }
+  }
+
+  // Buttons
   document.getElementById("btnGenerate").addEventListener("click", generate);
   document.getElementById("btnRegenerate").addEventListener("click", generate);
 
@@ -404,17 +840,7 @@
     renderAll();
   });
 
-  document.getElementById("btnCopy").addEventListener("click", async () => {
-    if (!waText.value) return;
-    try {
-      await navigator.clipboard.writeText(waText.value);
-      status.textContent = "Copié dans le presse-papiers";
-      status.className = "small ok";
-    } catch {
-      status.textContent = "Copie impossible. Sélectionne le texte et copie manuellement.";
-      status.className = "small warn";
-    }
-  });
+  document.getElementById("btnCopy").addEventListener("click", copyWA);
 
   document.getElementById("btnClearPair").addEventListener("click", () => {
     document.getElementById("pairA").value = "";
@@ -427,14 +853,15 @@
   document.getElementById("pairB").addEventListener("change", persistPairOption);
   document.getElementById("pairLast").addEventListener("change", persistPairOption);
 
-  startTimeInput.addEventListener("change", () => {
-    persistStartTime();
-    // pas de régénération automatique, mais l'utilisateur peut le faire
-  });
+  startTimeInput.addEventListener("change", persistStartTime);
+
+  // Sticky bar bindings
+  document.getElementById("btnGenerateSticky").addEventListener("click", generate);
+  document.getElementById("btnCopySticky").addEventListener("click", copyWA);
 
   function renderAll() {
-    renderGrid(players, playersGrid, "P");
-    renderGrid(guests, guestsGrid, "G");
+    renderTiles(players, playersGrid, "P");
+    renderTiles(guests, guestsGrid, "G");
     updateCount();
   }
 
@@ -442,6 +869,7 @@
   fillPairSelectors();
   loadStartTime();
   renderAll();
+  setStatus("Prêt", "");
 </script>
 </body>
 </html>
