@@ -3,873 +3,375 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tirage Golf</title>
+  <title>Draw</title>
+
+  <!-- iOS / PWA icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+  <!-- iOS PWA meta -->
+  <meta name="theme-color" content="#0b2018">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <style>
     :root{
-      /* Golf palette (sobre) */
-      --bg: #0b2018;            /* vert très sombre (fond) */
-      --surface: #0f2a20;       /* vert sombre (cartes) */
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.09);
-      --border: rgba(255,255,255,.10);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --muted2: rgba(255,255,255,.55);
-
-      --accent: #2dd4a6;        /* vert menthe */
-      --accent2: #a3f7d8;       /* menthe clair */
-      --danger: #ffb020;        /* warning */
-      --ok: #2dd4a6;
-
-      --shadow: 0 10px 30px rgba(0,0,0,.28);
-      --radius: 16px;
-      --radius2: 12px;
-
-      --tap: 48px;
+      --bg:#0b2018;
+      --surface:#0f2a20;
+      --card:rgba(255,255,255,.06);
+      --border:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.65);
+      --accent:#2dd4a6;
+      --accent2:#a3f7d8;
+      --radius:16px;
+      --tap:48px;
     }
 
-    *{ box-sizing: border-box; }
+    *{box-sizing:border-box}
     body{
-      margin: 0;
+      margin:0;
+      font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;
       background:
-        radial-gradient(1200px 600px at 30% -10%, rgba(45,212,166,.20), transparent 55%),
-        radial-gradient(900px 500px at 110% 20%, rgba(163,247,216,.10), transparent 45%),
-        linear-gradient(180deg, #081a13, var(--bg));
-      color: var(--text);
-      font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      line-height: 1.35;
+        radial-gradient(1200px 600px at 30% -10%, rgba(45,212,166,.18), transparent 55%),
+        linear-gradient(180deg,#081a13,var(--bg));
+      color:var(--text);
     }
 
     .wrap{
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 18px 14px 120px;
+      max-width:1100px;
+      margin:auto;
+      padding:18px 14px 120px;
     }
 
-    /* Header */
-    .header{
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 6px 0 14px;
-    }
-    h1{
-      margin: 0;
-      font-size: 22px;
-      letter-spacing: .2px;
-    }
-    .subtitle{
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      max-width: 72ch;
-    }
+    h1{margin:0;font-size:22px}
+    .subtitle{color:var(--muted);font-size:13px;margin-top:6px}
+
     .pill{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 12px;
-      backdrop-filter: blur(8px);
-      white-space: nowrap;
-    }
-    .dot{
-      width: 8px; height: 8px; border-radius: 999px;
-      background: var(--danger);
-      box-shadow: 0 0 0 4px rgba(255,176,32,.14);
-    }
-    .dot.ok{
-      background: var(--ok);
-      box-shadow: 0 0 0 4px rgba(45,212,166,.14);
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--border);
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
 
-    /* Layout cards */
-    .grid2{
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 14px;
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:#ffb020;
     }
-    @media (max-width: 980px){
-      .grid2{ grid-template-columns: 1fr; }
+    .dot.ok{background:var(--accent)}
+
+    .grid2{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media(max-width:980px){
+      .grid2{grid-template-columns:1fr}
     }
 
     .panel{
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .panelHead{
-      padding: 14px 14px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-    }
-    .panelTitle{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .panelTitle strong{
-      font-size: 14px;
-      letter-spacing: .2px;
-    }
-    .panelBody{
-      padding: 14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      overflow:hidden;
     }
 
-    /* Actions bar (mobile-first) */
-    .actions{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
+    .panelHead{
+      padding:14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
     }
-    .actions .row2{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 981px){
-      .actions{ grid-template-columns: 1fr; }
-      .actions .row2{ grid-template-columns: 1fr 1fr 1fr; }
-    }
+
+    .panelBody{padding:14px}
 
     .btn{
-      height: var(--tap);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-weight: 650;
-      letter-spacing: .2px;
-      padding: 0 14px;
-      cursor: pointer;
-      transition: transform .05s ease, background .15s ease, border-color .15s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      user-select: none;
+      height:var(--tap);
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      font-weight:700;
+      cursor:pointer;
     }
-    .btn:active{ transform: translateY(1px); }
     .btn.primary{
-      background: linear-gradient(135deg, rgba(45,212,166,.95), rgba(163,247,216,.55));
-      border-color: rgba(45,212,166,.35);
-      color: #042015;
-      box-shadow: 0 10px 28px rgba(45,212,166,.18);
-    }
-    .btn.ghost{
-      background: transparent;
-      border-color: rgba(255,255,255,.14);
-      color: var(--muted);
-      font-weight: 600;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#042015;
+      border:none;
     }
 
-    .fieldRow{
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    @media (min-width: 981px){
-      .fieldRow{ grid-template-columns: 1fr 1fr; }
+    .actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
     }
 
     .field{
       display:flex;
+      justify-content:space-between;
       align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-    }
-    .field label{
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 650;
-      letter-spacing: .2px;
-      white-space: nowrap;
-    }
-    input[type="time"], select{
-      height: 40px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,24,18,.45);
-      color: var(--text);
-      padding: 0 10px;
-      outline: none;
-      width: 150px;
-    }
-    select{ width: 160px; }
-
-    .hint{
-      font-size: 12px;
-      color: var(--muted2);
-      margin-top: 6px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      margin-top:10px;
+      font-size:13px;
     }
 
-    /* Collapsible sections */
+    input[type=time],select{
+      background:#0a1812;
+      border:1px solid var(--border);
+      border-radius:10px;
+      color:var(--text);
+      padding:6px 10px;
+    }
+
     details{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 14px;
-      overflow: hidden;
-      margin-top: 12px;
+      margin-top:12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
     }
     summary{
-      list-style: none;
-      cursor: pointer;
-      padding: 12px 12px;
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      font-weight: 750;
-      letter-spacing: .2px;
-      color: var(--text);
-      user-select: none;
-    }
-    summary::-webkit-details-marker{ display:none; }
-    .chev{
-      width: 10px; height: 10px;
-      border-right: 2px solid rgba(255,255,255,.65);
-      border-bottom: 2px solid rgba(255,255,255,.65);
-      transform: rotate(-45deg);
-      transition: transform .18s ease;
-      margin-right: 2px;
-    }
-    details[open] .chev{ transform: rotate(45deg); }
-
-    .sectionBody{
-      padding: 10px 12px 12px;
-      border-top: 1px solid rgba(255,255,255,.08);
+      padding:12px;
+      cursor:pointer;
+      font-weight:700;
     }
 
-    /* Player tiles */
     .playersGrid{
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-    @media (min-width: 520px){
-      .playersGrid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-    @media (min-width: 981px){
-      .playersGrid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      padding:10px;
     }
 
     .tile{
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      padding: 10px 10px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px;
       display:flex;
+      justify-content:space-between;
       align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      min-height: 44px;
-    }
-
-    .name{
-      font-weight: 750;
-      letter-spacing: .3px;
-      font-size: 13px;
+      font-weight:700;
+      font-size:13px;
     }
 
     .toggle{
-      width: 44px;
-      height: 26px;
-      border-radius: 999px;
-      position: relative;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      flex: 0 0 auto;
+      width:40px;height:22px;
+      background:rgba(255,255,255,.2);
+      border-radius:999px;
+      position:relative;
     }
     .toggle::after{
       content:"";
       position:absolute;
-      top: 50%;
-      left: 3px;
-      width: 20px; height: 20px;
-      border-radius: 999px;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,.75);
-      transition: left .16s ease, background .16s ease;
-      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+      top:2px;left:2px;
+      width:18px;height:18px;
+      background:#fff;
+      border-radius:50%;
+      transition:.2s;
     }
-    input[type="checkbox"].cb{
-      display:none;
-    }
-    input[type="checkbox"].cb:checked + .toggle{
-      border-color: rgba(45,212,166,.35);
-      background: rgba(45,212,166,.22);
-    }
-    input[type="checkbox"].cb:checked + .toggle::after{
-      left: 21px;
-      background: var(--accent2);
-    }
+    input.cb{display:none}
+    input.cb:checked + .toggle{background:var(--accent)}
+    input.cb:checked + .toggle::after{left:20px}
 
-    /* Result */
-    .status{
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .status.ok{ color: var(--accent2); }
-    .status.warn{ color: #ffcc7a; }
-
-    .resultList{
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
     .resultItem{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      border-radius: 14px;
-      padding: 10px 12px;
       display:flex;
-      gap: 12px;
+      gap:10px;
       align-items:flex-start;
+      margin-bottom:8px;
     }
     .timeBadge{
-      min-width: 64px;
+      background:rgba(45,212,166,.2);
+      border:1px solid rgba(45,212,166,.4);
+      color:var(--accent2);
+      padding:6px 10px;
+      border-radius:10px;
+      font-weight:800;
+      min-width:64px;
       text-align:center;
-      border-radius: 12px;
-      padding: 8px 10px;
-      background: rgba(45,212,166,.14);
-      border: 1px solid rgba(45,212,166,.25);
-      color: var(--accent2);
-      font-weight: 800;
-      letter-spacing: .3px;
-    }
-    .playersLine{
-      font-weight: 650;
-      color: var(--text);
-      letter-spacing: .1px;
-      font-size: 13px;
-      margin-top: 2px;
     }
 
     textarea{
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(10,24,18,.35);
-      color: var(--text);
-      padding: 12px;
-      outline: none;
-      resize: vertical;
-      min-height: 160px;
-      font-size: 13px;
-      line-height: 1.4;
+      width:100%;
+      min-height:160px;
+      background:#0a1812;
+      border:1px solid var(--border);
+      border-radius:14px;
+      color:var(--text);
+      padding:12px;
+      margin-top:10px;
     }
 
-    /* Sticky bottom bar (mobile) */
-    .stickyBar{
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      padding: 10px 12px 12px;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,.55));
-      backdrop-filter: blur(10px);
+    .sticky{
+      position:fixed;
+      bottom:0;left:0;right:0;
+      background:rgba(0,0,0,.6);
+      backdrop-filter:blur(10px);
+      padding:10px;
     }
-    .stickyInner{
-      max-width: 1080px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 10px;
-    }
-    @media (min-width: 981px){
-      .stickyBar{ display:none; }
-    }
-
-    .miniBtn{
-      height: 50px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.07);
-      color: var(--text);
-      font-weight: 750;
-      letter-spacing: .2px;
-      cursor: pointer;
-    }
-    .miniBtn.primary{
-      background: linear-gradient(135deg, rgba(45,212,166,.95), rgba(163,247,216,.55));
-      border-color: rgba(45,212,166,.35);
-      color: #042015;
-    }
+    .sticky .btn{width:100%}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div>
-        <h1>Tirage Golf</h1>
-        <div class="subtitle">
-          Sélectionne les présents, renseigne le 1er départ, puis génère. Les groupes de 4 sont toujours en fin de liste.
-        </div>
-      </div>
-      <div class="pill" id="countPill">
-        <span class="dot" id="countDot"></span>
-        <span id="countText">0 présents</span>
-      </div>
-    </div>
+<div class="wrap">
+  <h1>Draw</h1>
+  <div class="subtitle">Sélectionne les présents, renseigne le 1er départ, puis génère.</div>
 
-    <div class="grid2">
-      <!-- Left: Selection & options -->
-      <section class="panel">
-        <div class="panelHead">
-          <div class="panelTitle">
-            <strong>Sélection</strong>
-            <span class="status" id="smallNote">Coches mémorisées sur cet appareil</span>
-          </div>
-
-          <div class="actions">
-            <button class="btn primary" id="btnGenerate">Générer</button>
-
-            <div class="row2">
-              <button class="btn" id="btnRegenerate">Regénérer</button>
-              <button class="btn ghost" id="btnAllPlayers">Tout cocher</button>
-              <button class="btn ghost" id="btnNoneAll">Tout décocher</button>
-            </div>
-          </div>
-
-          <div class="fieldRow">
-            <div class="field">
-              <label for="startTime">1er départ</label>
-              <input type="time" id="startTime" />
-            </div>
-            <div class="field">
-              <label>Intervalle</label>
-              <div style="font-weight:800; color:var(--accent2)">+8 min</div>
-            </div>
-          </div>
-          <div class="hint">Le message WhatsApp affichera uniquement les horaires et les joueurs.</div>
-        </div>
-
-        <div class="panelBody">
-          <details open>
-            <summary>
-              Joueurs
-              <span class="chev"></span>
-            </summary>
-            <div class="sectionBody">
-              <div class="playersGrid" id="playersGrid"></div>
-            </div>
-          </details>
-
-          <details>
-            <summary>
-              Invités
-              <span class="chev"></span>
-            </summary>
-            <div class="sectionBody">
-              <div class="playersGrid" id="guestsGrid"></div>
-            </div>
-          </details>
-
-          <details>
-            <summary>
-              Options
-              <span class="chev"></span>
-            </summary>
-            <div class="sectionBody">
-              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-                <select id="pairA"></select>
-                <select id="pairB"></select>
-
-                <label class="inline" style="font-size:12px; color:var(--muted);">
-                  <input type="checkbox" id="pairLast" />
-                  Paire en dernière partie (en respectant 4 à la fin)
-                </label>
-
-                <button class="btn ghost" id="btnClearPair" style="height:40px;">Désactiver</button>
-              </div>
-              <div class="hint">
-                Si des groupes de 4 existent, la paire ira dans le dernier 4 ; sinon dans le dernier 3.
-              </div>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <!-- Right: Results & WhatsApp -->
-      <section class="panel">
-        <div class="panelHead">
-          <div class="panelTitle">
-            <strong>Résultat</strong>
-            <span class="status" id="status">Prêt</span>
-          </div>
-          <div class="actions" style="margin-top:10px;">
-            <button class="btn primary" id="btnCopy">Copier WhatsApp</button>
-          </div>
-        </div>
-
-        <div class="panelBody">
-          <div class="resultList" id="result"></div>
-
-          <div style="margin-top:14px; font-weight:800; letter-spacing:.2px;">Texte WhatsApp</div>
-          <div class="hint" style="margin-bottom:8px;">Colle tel quel dans WhatsApp.</div>
-          <textarea id="waText" readonly></textarea>
-        </div>
-      </section>
-    </div>
+  <div class="pill" id="countPill">
+    <span class="dot" id="countDot"></span>
+    <span id="countText">0 présents</span>
   </div>
 
-  <!-- Sticky bar for iPhone -->
-  <div class="stickyBar">
-    <div class="stickyInner">
-      <button class="miniBtn primary" id="btnGenerateSticky">Générer</button>
-      <button class="miniBtn" id="btnCopySticky">Copier WhatsApp</button>
-    </div>
+  <div class="grid2">
+    <section class="panel">
+      <div class="panelHead">
+        <button class="btn primary" id="btnGenerate">Générer</button>
+
+        <div class="actions">
+          <button class="btn" id="btnAll">Tout cocher</button>
+          <button class="btn" id="btnNone">Tout décocher</button>
+        </div>
+
+        <div class="field">
+          <span>1er départ</span>
+          <input type="time" id="startTime">
+        </div>
+
+        <div class="field">
+          <span>Intervalle</span>
+          <strong style="color:var(--accent2)">+8 min</strong>
+        </div>
+      </div>
+
+      <div class="panelBody">
+        <details open>
+          <summary>Joueurs</summary>
+          <div class="playersGrid" id="playersGrid"></div>
+        </details>
+
+        <details>
+          <summary>Invités</summary>
+          <div class="playersGrid" id="guestsGrid"></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panelHead">
+        <button class="btn primary" id="btnCopy">Copier WhatsApp</button>
+      </div>
+      <div class="panelBody">
+        <div id="result"></div>
+        <textarea id="waText" readonly></textarea>
+      </div>
+    </section>
   </div>
+</div>
+
+<div class="sticky">
+  <button class="btn primary" onclick="generate()">Générer</button>
+</div>
 
 <script>
-  // === Données ===
-  const players = [
-    "RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG",
-    "JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"
-  ];
-  const guests = ["INV1","INV2","INV3"];
+  const players=["RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG","JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"];
+  const guests=["INV1","INV2","INV3"];
+  const INTERVAL=8;
 
-  const STORAGE_KEY = "tirage_golf_presence_v4";
-  const PAIR_KEY = "tirage_golf_pair_v2";
-  const TIME_KEY = "tirage_golf_start_time_v1";
-  const INTERVAL_MIN = 8;
+  const presence=JSON.parse(localStorage.getItem("draw_presence")||"{}");
 
-  function loadJSON(key, fallback) {
-    try { return JSON.parse(localStorage.getItem(key) || "") ?? fallback; }
-    catch { return fallback; }
+  function render(list,container,prefix){
+    container.innerHTML="";
+    list.forEach(n=>{
+      const key=prefix+n;
+      const d=document.createElement("div");
+      d.className="tile";
+      d.innerHTML=`${n}<label><input class="cb" type="checkbox" ${presence[key]?"checked":""}><span class="toggle"></span></label>`;
+      d.querySelector("input").onchange=e=>{
+        presence[key]=e.target.checked;
+        localStorage.setItem("draw_presence",JSON.stringify(presence));
+        updateCount();
+      };
+      container.appendChild(d);
+    });
   }
-  function saveJSON(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
 
-  // Shuffle Fisher–Yates
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+  function getPresent(){
+    return [...players.filter(p=>presence["P"+p]),...guests.filter(g=>presence["G"+g])];
+  }
+
+  function groupSizes(n){
+    if(n%4===0)return Array(n/4).fill(4);
+    if(n%4===1)return [3,3,3,...Array((n-9)/4).fill(4)];
+    if(n%4===2)return [3,3,...Array((n-6)/4).fill(4)];
+    return [3,...Array((n-3)/4).fill(4)];
+  }
+
+  function shuffle(a){
+    a=[...a];
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
     }
     return a;
   }
 
-  // Groupes 3/4 uniquement, et ordre [3...,4...] => 4 à la fin
-  function groupSizes(n) {
-    if (n < 3) throw new Error("Il faut au moins 3 joueurs présents.");
+  function generate(){
+    const list=shuffle(getPresent());
+    const sizes=groupSizes(list.length);
+    let idx=0;
+    const groups=sizes.map(s=>list.slice(idx,idx+=s));
 
-    const r = n % 4;
-    let n3 = 0, n4 = 0;
+    const start=document.getElementById("startTime").value||"08:00";
+    const [h,m]=start.split(":").map(Number);
+    let cur=h*60+m;
 
-    if (r === 0) { n3 = 0; n4 = n / 4; }
-    else if (r === 1) {
-      if (n < 9) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`);
-      n3 = 3; n4 = (n - 9) / 4;
-    } else if (r === 2) {
-      if (n < 6) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`);
-      n3 = 2; n4 = (n - 6) / 4;
-    } else { // r === 3
-      n3 = 1; n4 = (n - 3) / 4;
-    }
+    const res=document.getElementById("result");
+    const wa=[];
+    res.innerHTML="";
 
-    return [...Array(n3).fill(3), ...Array(n4).fill(4)];
-  }
+    groups.forEach(g=>{
+      const hh=String(Math.floor(cur/60)).padStart(2,"0");
+      const mm=String(cur%60).padStart(2,"0");
+      const line=`${hh}:${mm} : ${g.join(" / ")}`;
+      wa.push(line);
 
-  function getForcedPairOption() {
-    const a = document.getElementById("pairA")?.value || "";
-    const b = document.getElementById("pairB")?.value || "";
-    const last = document.getElementById("pairLast")?.checked || false;
-    if (!a || !b || a === b) return null;
-    return { a, b, last };
-  }
+      const div=document.createElement("div");
+      div.className="resultItem";
+      div.innerHTML=`<div class="timeBadge">${hh}:${mm}</div><div>${g.join(" / ")}</div>`;
+      res.appendChild(div);
 
-  // Paires + respect strict "plus nombreux à la fin"
-  function makeGroups(presentList, forcedPair) {
-    const n = presentList.length;
-    const sizes = groupSizes(n);
-
-    let pool = shuffle(presentList);
-
-    let pair = null;
-    if (forcedPair && pool.includes(forcedPair.a) && pool.includes(forcedPair.b)) {
-      pair = forcedPair;
-      pool = pool.filter(x => x !== pair.a && x !== pair.b);
-    }
-
-    let targetSize = null;
-    if (pair) targetSize = sizes.includes(4) ? 4 : 3;
-
-    let targetIndex = -1;
-    if (pair) {
-      if (pair.last) {
-        for (let i = sizes.length - 1; i >= 0; i--) {
-          if (sizes[i] === targetSize) { targetIndex = i; break; }
-        }
-      } else {
-        for (let i = 0; i < sizes.length; i++) {
-          if (sizes[i] === targetSize) { targetIndex = i; break; }
-        }
-      }
-      if (targetIndex === -1) throw new Error("Impossible de placer la paire (aucun groupe compatible).");
-    }
-
-    const groups = [];
-    for (let i = 0; i < sizes.length; i++) {
-      const sz = sizes[i];
-
-      if (pair && i === targetIndex) {
-        const g = [pair.a, pair.b];
-        while (g.length < sz) {
-          const next = pool.shift();
-          if (!next) throw new Error("Impossible de compléter le groupe forcé (pas assez de joueurs).");
-          g.push(next);
-        }
-        groups.push(g);
-      } else {
-        const g = [];
-        while (g.length < sz) {
-          const next = pool.shift();
-          if (!next) throw new Error("Erreur interne : pas assez de joueurs pour compléter un groupe.");
-          g.push(next);
-        }
-        groups.push(g);
-      }
-    }
-
-    return groups;
-  }
-
-  // Horaires
-  function parseTimeHHMM(s) {
-    if (!s || typeof s !== "string") return null;
-    const m = s.match(/^(\d{2}):(\d{2})$/);
-    if (!m) return null;
-    const hh = Number(m[1]), mm = Number(m[2]);
-    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
-    return { hh, mm };
-  }
-  function addMinutes(t, minutesToAdd) {
-    const total = (t.hh * 60 + t.mm + minutesToAdd) % (24 * 60);
-    return { hh: Math.floor(total / 60), mm: total % 60 };
-  }
-  function formatHHMM(t) {
-    return `${String(t.hh).padStart(2,"0")}:${String(t.mm).padStart(2,"0")}`;
-  }
-  function buildTeeTimes(startHHMM, count, intervalMin) {
-    const start = parseTimeHHMM(startHHMM);
-    if (!start) return null;
-    const times = [];
-    for (let i = 0; i < count; i++) times.push(formatHHMM(addMinutes(start, i * intervalMin)));
-    return times;
-  }
-
-  // WhatsApp : horaires + joueurs uniquement
-  function formatWA(groups, startTimeHHMM) {
-    const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
-    if (!times) throw new Error("Renseigne un 1er départ valide (format HH:MM).");
-    return groups.map((g, i) => `${times[i]} : ${g.join(" / ")}`).join("\n");
-  }
-
-  // === UI ===
-  const playersGrid = document.getElementById("playersGrid");
-  const guestsGrid = document.getElementById("guestsGrid");
-  const status = document.getElementById("status");
-  const result = document.getElementById("result");
-  const waText = document.getElementById("waText");
-  const startTimeInput = document.getElementById("startTime");
-
-  const countText = document.getElementById("countText");
-  const countDot = document.getElementById("countDot");
-
-  let presence = loadJSON(STORAGE_KEY, {});
-
-  function savePresence() { saveJSON(STORAGE_KEY, presence); }
-
-  function renderTiles(names, container, prefix) {
-    container.innerHTML = "";
-    names.forEach(name => {
-      const key = `${prefix}:${name}`;
-      const id = `${prefix}_${name.replace(/\s+/g,"_")}`;
-
-      const tile = document.createElement("div");
-      tile.className = "tile";
-
-      tile.innerHTML = `
-        <div class="name">${name}</div>
-        <label style="display:flex; align-items:center; gap:10px;">
-          <input class="cb" type="checkbox" id="${id}" ${presence[key] ? "checked" : ""} />
-          <span class="toggle" aria-hidden="true"></span>
-        </label>
-      `;
-
-      container.appendChild(tile);
-
-      tile.querySelector("input").addEventListener("change", (e) => {
-        presence[key] = e.target.checked;
-        savePresence();
-        updateCount();
-      });
-
-      // Tap anywhere on tile toggles checkbox (mobile friendly)
-      tile.addEventListener("click", (ev) => {
-        if (ev.target && (ev.target.tagName === "INPUT" || ev.target.classList.contains("toggle"))) return;
-        const cb = tile.querySelector("input");
-        cb.checked = !cb.checked;
-        presence[key] = cb.checked;
-        savePresence();
-        updateCount();
-      });
+      cur+=INTERVAL;
     });
+
+    document.getElementById("waText").value=wa.join("\n");
   }
 
-  function getPresentList() {
-    const presentPlayers = players.filter(p => presence[`P:${p}`]);
-    const presentGuests  = guests.filter(g => presence[`G:${g}`]);
-    return [...presentPlayers, ...presentGuests];
+  function updateCount(){
+    const n=getPresent().length;
+    document.getElementById("countText").textContent=n+" présents";
+    document.getElementById("countDot").className="dot"+(n>=3?" ok":"");
   }
 
-  function updateCount() {
-    const n = getPresentList().length;
-    countText.textContent = `${n} présents`;
-    countDot.className = "dot " + (n >= 3 ? "ok" : "");
-  }
+  document.getElementById("btnGenerate").onclick=generate;
+  document.getElementById("btnCopy").onclick=()=>navigator.clipboard.writeText(document.getElementById("waText").value);
+  document.getElementById("btnAll").onclick=()=>{players.forEach(p=>presence["P"+p]=true);guests.forEach(g=>presence["G"+g]=true);localStorage.setItem("draw_presence",JSON.stringify(presence));renderAll();};
+  document.getElementById("btnNone").onclick=()=>{Object.keys(presence).forEach(k=>presence[k]=false);localStorage.setItem("draw_presence",JSON.stringify(presence));renderAll();};
 
-  function fillPairSelectors() {
-    const all = [...players, ...guests];
-    const selA = document.getElementById("pairA");
-    const selB = document.getElementById("pairB");
-
-    const opts = ["(aucun)", ...all];
-    const html = opts.map(v => `<option value="${v === "(aucun)" ? "" : v}">${v}</option>`).join("");
-    selA.innerHTML = html;
-    selB.innerHTML = html;
-
-    const saved = loadJSON(PAIR_KEY, { a:"", b:"", last:false });
-    if (saved.a) selA.value = saved.a;
-    if (saved.b) selB.value = saved.b;
-    document.getElementById("pairLast").checked = !!saved.last;
-  }
-
-  function persistPairOption() {
-    const forcedPair = getForcedPairOption();
-    saveJSON(PAIR_KEY, forcedPair ? forcedPair : { a:"", b:"", last:false });
-  }
-
-  function loadStartTime() {
-    const saved = localStorage.getItem(TIME_KEY);
-    startTimeInput.value = saved || "08:00";
-  }
-  function persistStartTime() {
-    if (startTimeInput.value) localStorage.setItem(TIME_KEY, startTimeInput.value);
-  }
-
-  function renderResult(groups, startTimeHHMM) {
-    result.innerHTML = "";
-    const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
-
-    groups.forEach((g, i) => {
-      const item = document.createElement("div");
-      item.className = "resultItem";
-      const badge = times ? times[i] : `#${i+1}`;
-
-      item.innerHTML = `
-        <div class="timeBadge">${badge}</div>
-        <div class="playersLine">${g.join(" / ")}</div>
-      `;
-      result.appendChild(item);
-    });
-  }
-
-  function setStatus(text, kind){
-    status.textContent = text;
-    status.className = "status " + (kind || "");
-  }
-
-  function generate() {
-    try {
-      const presentList = getPresentList();
-      const forcedPair = getForcedPairOption();
-      persistPairOption();
-      persistStartTime();
-
-      const groups = makeGroups(presentList, forcedPair);
-      renderResult(groups, startTimeInput.value);
-      waText.value = formatWA(groups, startTimeInput.value);
-
-      setStatus("OK", "ok");
-    } catch (e) {
-      result.innerHTML = "";
-      waText.value = "";
-      setStatus(e.message, "warn");
-    }
-  }
-
-  async function copyWA(){
-    if (!waText.value) return;
-    try {
-      await navigator.clipboard.writeText(waText.value);
-      setStatus("Copié", "ok");
-    } catch {
-      setStatus("Copie impossible. Copie manuelle.", "warn");
-    }
-  }
-
-  // Buttons
-  document.getElementById("btnGenerate").addEventListener("click", generate);
-  document.getElementById("btnRegenerate").addEventListener("click", generate);
-
-  document.getElementById("btnAllPlayers").addEventListener("click", () => {
-    players.forEach(p => presence[`P:${p}`] = true);
-    savePresence();
-    renderAll();
-  });
-
-  document.getElementById("btnNoneAll").addEventListener("click", () => {
-    [...players.map(p=>`P:${p}`), ...guests.map(g=>`G:${g}`)].forEach(k => presence[k] = false);
-    savePresence();
-    renderAll();
-  });
-
-  document.getElementById("btnCopy").addEventListener("click", copyWA);
-
-  document.getElementById("btnClearPair").addEventListener("click", () => {
-    document.getElementById("pairA").value = "";
-    document.getElementById("pairB").value = "";
-    document.getElementById("pairLast").checked = false;
-    saveJSON(PAIR_KEY, {a:"", b:"", last:false});
-  });
-
-  document.getElementById("pairA").addEventListener("change", persistPairOption);
-  document.getElementById("pairB").addEventListener("change", persistPairOption);
-  document.getElementById("pairLast").addEventListener("change", persistPairOption);
-
-  startTimeInput.addEventListener("change", persistStartTime);
-
-  // Sticky bar bindings
-  document.getElementById("btnGenerateSticky").addEventListener("click", generate);
-  document.getElementById("btnCopySticky").addEventListener("click", copyWA);
-
-  function renderAll() {
-    renderTiles(players, playersGrid, "P");
-    renderTiles(guests, guestsGrid, "G");
+  function renderAll(){
+    render(players,playersGrid,"P");
+    render(guests,guestsGrid,"G");
     updateCount();
   }
 
-  // Init
-  fillPairSelectors();
-  loadStartTime();
   renderAll();
-  setStatus("Prêt", "");
 </script>
 </body>
 </html>
