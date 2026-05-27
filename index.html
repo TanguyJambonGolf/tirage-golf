@@ -44,7 +44,6 @@
     }
 
     .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px 14px 96px; }
-
     header{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom: 14px; }
     h1{ margin:0; font-size: 22px; letter-spacing:.2px; }
     .subtitle{ margin-top:6px; color: var(--muted); font-size: 13px; max-width: 70ch; }
@@ -58,8 +57,38 @@
     .dot{ width:10px; height:10px; border-radius:999px; background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
     .dot.ok{ background: var(--accent); box-shadow: 0 0 0 4px rgba(14,163,122,.18); }
 
+    .tabs{
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 6px;
+      background: rgba(255,255,255,.65);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 22px rgba(2,6,23,.05);
+    }
+    .tabBtn{
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .tabBtn.active{
+      background: #fff;
+      color: var(--accent2);
+      border-color: rgba(14,163,122,.18);
+      box-shadow: 0 6px 18px rgba(2,6,23,.06);
+    }
+    .tabPanel{ display:none; }
+    .tabPanel.active{ display:block; }
+
     .grid2{ display:grid; grid-template-columns: 1.05fr .95fr; gap: 14px; }
     @media (max-width: 980px){ .grid2{ grid-template-columns: 1fr; } }
+    @media (max-width: 680px){ .tabs{ grid-template-columns: repeat(2, 1fr); } }
 
     .card{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
     .cardHead{ padding: 14px 14px 12px; border-bottom: 1px solid rgba(15,23,42,.08); background: linear-gradient(180deg, rgba(14,163,122,.06), transparent); }
@@ -79,6 +108,7 @@
     .btn:active{ transform: translateY(1px); }
     .btn.primary{ border-color: rgba(14,163,122,.35); background: linear-gradient(135deg, rgba(14,163,122,.14), rgba(14,163,122,.06)); box-shadow: 0 10px 22px rgba(14,163,122,.12); }
     .btn.ghost{ background: #fff; color: var(--muted); font-weight: 750; }
+    .btn.danger{ background: var(--dangerSoft); border-color: rgba(185,28,28,.18); color: var(--danger); }
 
     .fields{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
     @media (max-width: 520px){ .fields{ grid-template-columns: 1fr; } }
@@ -134,7 +164,18 @@
     .timeBadge{ min-width: 72px; text-align:center; border-radius: 12px; padding: 8px 10px; background: var(--accentSoft); border: 1px solid rgba(14,163,122,.22); color: var(--accent2); font-weight: 950; letter-spacing: .3px; }
     .playersLine{ font-weight: 800; font-size: 13px; color: var(--text); margin-top: 2px; }
 
+    .historyList{ display:grid; gap:12px; margin-top:12px; }
+    .historyItem{ border:1px solid rgba(15,23,42,.10); border-radius:14px; background:#fff; padding:12px; }
+    .historyTop{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:8px; }
+    .historyTitle{ font-weight:950; font-size:14px; }
+    .historyMeta{ color:var(--muted); font-size:12px; margin-top:3px; }
+    .historyActions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .smallBtn{ height:34px; padding:0 10px; border-radius:10px; border:1px solid var(--border); background:#fff; font-weight:800; cursor:pointer; color:var(--text); }
+    .smallBtn.danger{ background:var(--dangerSoft); color:var(--danger); border-color:rgba(185,28,28,.18); }
+    .historyText{ white-space:pre-wrap; font-size:13px; line-height:1.45; background:rgba(14,163,122,.04); border:1px solid rgba(14,163,122,.12); border-radius:12px; padding:10px; }
+
     textarea{ width:100%; min-height: 160px; border-radius: 14px; border: 1px solid rgba(15,23,42,.12); background: #fff; color: var(--text); padding: 12px; outline: none; resize: vertical; font-size: 13px; line-height: 1.45; }
+    .placeholder{ color:var(--muted); font-size:14px; line-height:1.5; }
 
     .stickyBar{ position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 12px 12px; background: linear-gradient(180deg, rgba(246,250,247,0), rgba(246,250,247,.92)); backdrop-filter: blur(10px); border-top: 1px solid rgba(15,23,42,.08); }
     .stickyInner{ max-width: 1100px; margin: 0 auto; display:grid; grid-template-columns: 1.1fr .9fr; gap: 10px; }
@@ -152,81 +193,127 @@
       <div class="pill"><span class="dot" id="countDot"></span><span id="countText">0 présents</span></div>
     </header>
 
-    <div class="grid2">
-      <section class="card">
-        <div class="cardHead">
-          <div class="cardTitleRow"><div class="cardTitle">Sélection</div><div class="status">Coches mémorisées</div></div>
-          <div class="btnRow" style="margin-top:10px;"><button class="btn primary" id="btnGenerate">Générer</button><button class="btn" id="btnRegenerate">Regénérer</button></div>
-          <div class="btnRow"><button class="btn ghost" id="btnAllPlayers">Tout cocher (joueurs)</button><button class="btn ghost" id="btnNoneAll">Tout décocher</button></div>
-          <div class="fields">
-            <div class="field"><label for="startTime">1er départ</label><input type="time" id="startTime" /></div>
-            <div class="field"><label>Intervalle</label><div style="font-weight:950; color:var(--accent2)">+8 min</div></div>
+    <nav class="tabs" aria-label="Navigation">
+      <button class="tabBtn active" data-tab="draw">Tirage</button>
+      <button class="tabBtn" data-tab="players">Joueurs</button>
+      <button class="tabBtn" data-tab="history">Historique</button>
+      <button class="tabBtn" data-tab="stats">Stats</button>
+      <button class="tabBtn" data-tab="scores">Scores</button>
+    </nav>
+
+    <section class="tabPanel active" id="tab-draw">
+      <div class="grid2">
+        <section class="card">
+          <div class="cardHead">
+            <div class="cardTitleRow"><div class="cardTitle">Sélection</div><div class="status">Coches mémorisées</div></div>
+            <div class="btnRow" style="margin-top:10px;"><button class="btn primary" id="btnGenerate">Générer</button><button class="btn" id="btnRegenerate">Regénérer</button></div>
+            <div class="btnRow"><button class="btn ghost" id="btnAllPlayers">Tout cocher (joueurs)</button><button class="btn ghost" id="btnNoneAll">Tout décocher</button></div>
+            <div class="fields">
+              <div class="field"><label for="startTime">1er départ</label><input type="time" id="startTime" /></div>
+              <div class="field"><label>Intervalle</label><div style="font-weight:950; color:var(--accent2)">+8 min</div></div>
+            </div>
+            <div class="hint">Le WhatsApp affichera uniquement les horaires et les joueurs. Chaque tirage généré est enregistré dans l’historique.</div>
           </div>
-          <div class="hint">Le WhatsApp affichera uniquement les horaires et les joueurs.</div>
-        </div>
 
-        <div class="cardBody">
-          <details open>
-            <summary>Joueurs <span style="color:var(--muted); font-weight:800;">▼</span></summary>
-            <div class="sectionBody"><div class="playersGrid" id="playersGrid"></div></div>
-          </details>
+          <div class="cardBody">
+            <details open>
+              <summary>Joueurs <span style="color:var(--muted); font-weight:800;">▼</span></summary>
+              <div class="sectionBody"><div class="playersGrid" id="playersGrid"></div></div>
+            </details>
 
-          <details>
-            <summary>Invités <span style="color:var(--muted); font-weight:800;">▼</span></summary>
-            <div class="sectionBody"><div class="playersGrid" id="guestsGrid"></div></div>
-          </details>
+            <details>
+              <summary>Invités <span style="color:var(--muted); font-weight:800;">▼</span></summary>
+              <div class="sectionBody"><div class="playersGrid" id="guestsGrid"></div></div>
+            </details>
 
-          <details>
-            <summary>Gestion des joueurs <span style="color:var(--muted); font-weight:800;">▼</span></summary>
-            <div class="sectionBody">
-              <div class="manageBlock">
-                <div class="manageTitle">Ajouter un joueur</div>
+            <details>
+              <summary>Options <span style="color:var(--muted); font-weight:800;">▼</span></summary>
+              <div class="sectionBody">
                 <div class="optionsRow">
-                  <input type="text" id="newPlayerName" placeholder="Nom ou initiales">
-                  <button class="btn" id="btnAddPlayer" style="height:40px;padding:0 14px;">Ajouter</button>
+                  <select id="force1"></select>
+                  <select id="force2"></select>
+                  <select id="force3"></select>
+                  <select id="force4"></select>
+                  <label class="checkline"><input type="checkbox" id="forceLast" /> Groupe forcé en dernière partie</label>
+                  <button class="btn ghost" id="btnClearForce" style="height:40px; padding:0 12px;">Désactiver</button>
                 </div>
+                <div class="hint">Choisis 2 à 4 joueurs pour les forcer dans le même départ.</div>
               </div>
-              <div class="manageBlock">
-                <div class="manageTitle">Ajouter un invité</div>
-                <div class="optionsRow">
-                  <input type="text" id="newGuestName" placeholder="Nom invité">
-                  <button class="btn" id="btnAddGuest" style="height:40px;padding:0 14px;">Ajouter</button>
-                </div>
-              </div>
-              <div class="hint">Les listes sont sauvegardées automatiquement sur cet appareil. Le bouton rouge × supprime un joueur ou un invité.</div>
-            </div>
-          </details>
+            </details>
+          </div>
+        </section>
 
-          <details>
-            <summary>Options <span style="color:var(--muted); font-weight:800;">▼</span></summary>
-            <div class="sectionBody">
-              <div class="optionsRow">
-                <select id="force1"></select>
-                <select id="force2"></select>
-                <select id="force3"></select>
-                <select id="force4"></select>
-                <label class="checkline"><input type="checkbox" id="forceLast" /> Groupe forcé en dernière partie</label>
-                <button class="btn ghost" id="btnClearForce" style="height:40px; padding:0 12px;">Désactiver</button>
-              </div>
-              <div class="hint">Choisis 2 à 4 joueurs pour les forcer dans le même départ. “Dernière partie” = dernier groupe le plus grand possible (4 si possible, sinon 3), tout en gardant les 4 en fin.</div>
-            </div>
-          </details>
-        </div>
-      </section>
+        <section class="card">
+          <div class="cardHead">
+            <div class="cardTitleRow"><div class="cardTitle">Résultat</div><div class="status" id="status">Prêt</div></div>
+            <div class="btnRow" style="margin-top:10px;"><button class="btn primary" id="btnCopy">Copier WhatsApp</button><button class="btn ghost" id="btnClearText">Effacer</button></div>
+          </div>
+          <div class="cardBody">
+            <div class="resultList" id="result"></div>
+            <div style="margin-top:14px; font-weight:950; letter-spacing:.2px;">Texte WhatsApp</div>
+            <div class="hint" style="margin-bottom:8px;">Copie/colle tel quel dans WhatsApp.</div>
+            <textarea id="waText" readonly></textarea>
+          </div>
+        </section>
+      </div>
+    </section>
 
+    <section class="tabPanel" id="tab-players">
+      <div class="grid2">
+        <section class="card">
+          <div class="cardHead">
+            <div class="cardTitleRow"><div class="cardTitle">Gestion des joueurs</div><div class="status">Sauvegarde locale</div></div>
+            <div class="hint">Ajoute ou supprime des joueurs ici. L’onglet Tirage reste léger et centré sur la génération.</div>
+          </div>
+          <div class="cardBody">
+            <div class="manageBlock">
+              <div class="manageTitle">Ajouter un joueur</div>
+              <div class="optionsRow"><input type="text" id="newPlayerName" placeholder="Nom ou initiales"><button class="btn" id="btnAddPlayer" style="height:40px;padding:0 14px;">Ajouter</button></div>
+            </div>
+            <div class="playersGrid" id="playersAdminGrid"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHead">
+            <div class="cardTitleRow"><div class="cardTitle">Gestion des invités</div><div class="status">Sauvegarde locale</div></div>
+            <div class="hint">Les invités peuvent être ajoutés ou supprimés indépendamment de la liste principale.</div>
+          </div>
+          <div class="cardBody">
+            <div class="manageBlock">
+              <div class="manageTitle">Ajouter un invité</div>
+              <div class="optionsRow"><input type="text" id="newGuestName" placeholder="Nom invité"><button class="btn" id="btnAddGuest" style="height:40px;padding:0 14px;">Ajouter</button></div>
+            </div>
+            <div class="playersGrid" id="guestsAdminGrid"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="tabPanel" id="tab-history">
       <section class="card">
         <div class="cardHead">
-          <div class="cardTitleRow"><div class="cardTitle">Résultat</div><div class="status" id="status">Prêt</div></div>
-          <div class="btnRow" style="margin-top:10px;"><button class="btn primary" id="btnCopy">Copier WhatsApp</button><button class="btn ghost" id="btnClearText">Effacer</button></div>
+          <div class="cardTitleRow"><div class="cardTitle">Historique des tirages</div><div class="status" id="historyStatus">0 tirage</div></div>
+          <div class="btnRow" style="margin-top:10px;"><button class="btn ghost" id="btnRefreshHistory">Rafraîchir</button><button class="btn danger" id="btnClearHistory">Effacer historique</button></div>
+          <div class="hint">Chaque génération est enregistrée ici avec le WhatsApp correspondant.</div>
         </div>
-        <div class="cardBody">
-          <div class="resultList" id="result"></div>
-          <div style="margin-top:14px; font-weight:950; letter-spacing:.2px;">Texte WhatsApp</div>
-          <div class="hint" style="margin-bottom:8px;">Copie/colle tel quel dans WhatsApp.</div>
-          <textarea id="waText" readonly></textarea>
-        </div>
+        <div class="cardBody"><div class="historyList" id="historyList"></div></div>
       </section>
-    </div>
+    </section>
+
+    <section class="tabPanel" id="tab-stats">
+      <section class="card">
+        <div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Statistiques</div><div class="status">À venir</div></div></div>
+        <div class="cardBody"><div class="placeholder">Prochaine étape : statistiques de présence, partenaires les plus fréquents, et base pour éviter les pairings répétitifs.</div></div>
+      </section>
+    </section>
+
+    <section class="tabPanel" id="tab-scores">
+      <section class="card">
+        <div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Scores / Classement annuel</div><div class="status">À venir</div></div></div>
+        <div class="cardBody"><div class="placeholder">Étape ultérieure : intégrer progressivement le suivi des scores et le classement annuel à partir de ton fichier Excel.</div></div>
+      </section>
+    </section>
   </div>
 
   <div class="stickyBar"><div class="stickyInner"><button class="btn primary" id="btnGenerateSticky">Générer</button><button class="btn" id="btnCopySticky">Copier WhatsApp</button></div></div>
@@ -240,30 +327,23 @@
   const TIME_KEY = "draw_start_time_v1";
   const PLAYERS_KEY = "draw_players_v1";
   const GUESTS_KEY = "draw_guests_v1";
+  const HISTORY_KEY = "draw_history_v1";
   const INTERVAL_MIN = 8;
 
-  function loadJSON(key, fallback) {
-    try { const raw = localStorage.getItem(key); if (!raw) return fallback; return JSON.parse(raw); }
-    catch { return fallback; }
-  }
+  function loadJSON(key, fallback) { try { const raw = localStorage.getItem(key); if (!raw) return fallback; return JSON.parse(raw); } catch { return fallback; } }
   function saveJSON(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
 
   let players = loadJSON(PLAYERS_KEY, DEFAULT_PLAYERS);
   let guests = loadJSON(GUESTS_KEY, DEFAULT_GUESTS);
   let presence = loadJSON(STORAGE_KEY, {});
+  let history = loadJSON(HISTORY_KEY, []);
 
   function normalizeName(value) { return (value || "").trim().toUpperCase(); }
-
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-    return a;
-  }
+  function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
   function groupSizes(n) {
     if (n < 3) throw new Error("Il faut au moins 3 joueurs présents.");
-    const r = n % 4;
-    let n3 = 0, n4 = 0;
+    const r = n % 4; let n3 = 0, n4 = 0;
     if (r === 0) { n3 = 0; n4 = n / 4; }
     else if (r === 1) { if (n < 9) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`); n3 = 3; n4 = (n - 9) / 4; }
     else if (r === 2) { if (n < 6) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`); n3 = 2; n4 = (n - 6) / 4; }
@@ -286,38 +366,30 @@
     const sizes = groupSizes(presentList.length);
     let pool = shuffle(presentList);
     let forced = null;
-
     if (forcedGroup && Array.isArray(forcedGroup.players)) {
       const wanted = [];
       for (const p of forcedGroup.players) { if (pool.includes(p) && !wanted.includes(p)) wanted.push(p); if (wanted.length === 4) break; }
       if (wanted.length >= 2) forced = { players: wanted, last: !!forcedGroup.last };
     }
-
-    if (forced) {
-      const set = new Set(forced.players);
-      pool = pool.filter(x => !set.has(x));
-    }
-
-    let targetIndex = -1;
-    let targetSize = null;
+    if (forced) { const set = new Set(forced.players); pool = pool.filter(x => !set.has(x)); }
+    let targetIndex = -1, targetSize = null;
     if (forced) {
       const k = forced.players.length;
       const candidateIndices = [];
       for (let i = 0; i < sizes.length; i++) if (sizes[i] >= k) candidateIndices.push(i);
-      if (candidateIndices.length === 0) throw new Error(`Impossible de placer ${k} joueurs forcés (aucun groupe de taille suffisante).`);
+      if (candidateIndices.length === 0) throw new Error(`Impossible de placer ${k} joueurs forcés.`);
       const canUse3 = (k <= 3) && sizes.includes(3);
       const canUse4 = (k <= 4) && sizes.includes(4);
       if (forced.last) {
-        if (canUse4) targetSize = 4; else if (canUse3) targetSize = 3; else targetSize = 4;
+        targetSize = canUse4 ? 4 : (canUse3 ? 3 : 4);
         for (let i = sizes.length - 1; i >= 0; i--) if (sizes[i] === targetSize && sizes[i] >= k) { targetIndex = i; break; }
       } else {
-        if (canUse3) targetSize = 3; else if (canUse4) targetSize = 4; else targetSize = 4;
+        targetSize = canUse3 ? 3 : (canUse4 ? 4 : 4);
         for (let i = 0; i < sizes.length; i++) if (sizes[i] === targetSize && sizes[i] >= k) { targetIndex = i; break; }
         if (targetIndex === -1) targetIndex = candidateIndices[0];
       }
       if (targetIndex === -1) targetIndex = forced.last ? candidateIndices[candidateIndices.length - 1] : candidateIndices[0];
     }
-
     const groups = [];
     for (let i = 0; i < sizes.length; i++) {
       const sz = sizes[i];
@@ -334,66 +406,58 @@
     return groups;
   }
 
-  function parseTimeHHMM(s) {
-    if (!s || typeof s !== "string") return null;
-    const m = s.match(/^(\d{2}):(\d{2})$/);
-    if (!m) return null;
-    const hh = Number(m[1]), mm = Number(m[2]);
-    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
-    return { hh, mm };
-  }
+  function parseTimeHHMM(s) { if (!s || typeof s !== "string") return null; const m = s.match(/^(\d{2}):(\d{2})$/); if (!m) return null; const hh = Number(m[1]), mm = Number(m[2]); if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null; return { hh, mm }; }
   function addMinutes(t, minutesToAdd) { const total = (t.hh * 60 + t.mm + minutesToAdd) % (24 * 60); return { hh: Math.floor(total / 60), mm: total % 60 }; }
   function formatHHMM(t) { return `${String(t.hh).padStart(2,"0")}:${String(t.mm).padStart(2,"0")}`; }
-  function buildTeeTimes(startHHMM, count, intervalMin) {
-    const start = parseTimeHHMM(startHHMM);
-    if (!start) return null;
-    const times = [];
-    for (let i = 0; i < count; i++) times.push(formatHHMM(addMinutes(start, i * intervalMin)));
-    return times;
-  }
-  function formatWA(groups, startTimeHHMM) {
-    const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
-    if (!times) throw new Error("Renseigne un 1er départ valide (HH:MM).");
-    return groups.map((g, i) => `${times[i]} : ${g.join(" / ")}`).join("\n");
-  }
+  function buildTeeTimes(startHHMM, count, intervalMin) { const start = parseTimeHHMM(startHHMM); if (!start) return null; const times = []; for (let i = 0; i < count; i++) times.push(formatHHMM(addMinutes(start, i * intervalMin))); return times; }
+  function formatWA(groups, startTimeHHMM) { const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN); if (!times) throw new Error("Renseigne un 1er départ valide (HH:MM)."); return groups.map((g, i) => `${times[i]} : ${g.join(" / ")}`).join("\n"); }
 
   const playersGrid = document.getElementById("playersGrid");
   const guestsGrid = document.getElementById("guestsGrid");
+  const playersAdminGrid = document.getElementById("playersAdminGrid");
+  const guestsAdminGrid = document.getElementById("guestsAdminGrid");
   const statusEl = document.getElementById("status");
   const resultEl = document.getElementById("result");
   const waText = document.getElementById("waText");
   const startTimeInput = document.getElementById("startTime");
   const countText = document.getElementById("countText");
   const countDot = document.getElementById("countDot");
+  const historyList = document.getElementById("historyList");
+  const historyStatus = document.getElementById("historyStatus");
 
   function savePresence() { saveJSON(STORAGE_KEY, presence); }
   function setStatus(text, kind) { statusEl.textContent = text; statusEl.className = "status " + (kind || ""); }
 
-  function renderTiles(names, container, prefix) {
+  function switchTab(tabName) {
+    document.querySelectorAll(".tabBtn").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tabName));
+    document.querySelectorAll(".tabPanel").forEach(panel => panel.classList.toggle("active", panel.id === `tab-${tabName}`));
+    if (tabName === "history") renderHistory();
+  }
+
+  function renderPresenceTiles(names, container, prefix) {
     container.innerHTML = "";
     names.forEach(name => {
       const key = `${prefix}:${name}`;
       const id = `${prefix}_${name.replace(/\s+/g,"_")}`;
       const tile = document.createElement("div");
       tile.className = "tile";
-      tile.innerHTML = `
-        <div class="tileLeft">
-          <div class="name">${name}</div>
-          <button class="deleteBtn" data-name="${name}" data-prefix="${prefix}" title="Supprimer">×</button>
-        </div>
-        <label style="display:flex; align-items:center; gap:10px;">
-          <input class="cb" type="checkbox" id="${id}" ${presence[key] ? "checked" : ""} />
-          <span class="toggle" aria-hidden="true"></span>
-        </label>
-      `;
+      tile.innerHTML = `<div class="name">${name}</div><label style="display:flex; align-items:center; gap:10px;"><input class="cb" type="checkbox" id="${id}" ${presence[key] ? "checked" : ""} /><span class="toggle" aria-hidden="true"></span></label>`;
       container.appendChild(tile);
-
       const cb = tile.querySelector("input");
       cb.addEventListener("change", () => { presence[key] = cb.checked; savePresence(); updateCount(); });
+      tile.addEventListener("click", (ev) => { if (ev.target && (ev.target.tagName === "INPUT" || ev.target.classList.contains("toggle"))) return; cb.checked = !cb.checked; presence[key] = cb.checked; savePresence(); updateCount(); });
+    });
+  }
 
+  function renderAdminTiles(names, container, prefix) {
+    container.innerHTML = "";
+    names.forEach(name => {
+      const tile = document.createElement("div");
+      tile.className = "tile";
+      tile.innerHTML = `<div class="tileLeft"><div class="name">${name}</div><button class="deleteBtn" data-name="${name}" data-prefix="${prefix}" title="Supprimer">×</button></div>`;
+      container.appendChild(tile);
       const delBtn = tile.querySelector(".deleteBtn");
-      delBtn.addEventListener("click", (ev) => {
-        ev.stopPropagation();
+      delBtn.addEventListener("click", () => {
         const n = delBtn.dataset.name;
         const p = delBtn.dataset.prefix;
         if (!confirm(`Supprimer ${n} ?`)) return;
@@ -404,22 +468,10 @@
         renderAll();
         fillForceSelectors();
       });
-
-      tile.addEventListener("click", (ev) => {
-        if (ev.target && (ev.target.tagName === "INPUT" || ev.target.classList.contains("toggle") || ev.target.classList.contains("deleteBtn"))) return;
-        cb.checked = !cb.checked;
-        presence[key] = cb.checked;
-        savePresence();
-        updateCount();
-      });
     });
   }
 
-  function getPresentList() {
-    const presentPlayers = players.filter(p => presence[`P:${p}`]);
-    const presentGuests = guests.filter(g => presence[`G:${g}`]);
-    return [...presentPlayers, ...presentGuests];
-  }
+  function getPresentList() { return [...players.filter(p => presence[`P:${p}`]), ...guests.filter(g => presence[`G:${g}`])]; }
   function updateCount() { const n = getPresentList().length; countText.textContent = `${n} présents`; countDot.className = "dot" + (n >= 3 ? " ok" : ""); }
 
   function fillForceSelectors() {
@@ -429,12 +481,10 @@
     ["force1","force2","force3","force4"].forEach(id => { document.getElementById(id).innerHTML = html; });
     const saved = loadJSON(FORCE_KEY, { players: [], last: false });
     const savedPlayers = Array.isArray(saved.players) ? saved.players.filter(x => all.includes(x)) : [];
-    const ids = ["force1","force2","force3","force4"];
-    for (let i = 0; i < ids.length; i++) document.getElementById(ids[i]).value = savedPlayers[i] || "";
+    ["force1","force2","force3","force4"].forEach((id, i) => document.getElementById(id).value = savedPlayers[i] || "");
     document.getElementById("forceLast").checked = !!saved.last;
   }
   function persistForceOption() { const forced = getForcedGroupOption(); saveJSON(FORCE_KEY, forced ? forced : { players: [], last: false }); }
-
   function loadStartTime() { const saved = localStorage.getItem(TIME_KEY); startTimeInput.value = saved || "08:00"; }
   function persistStartTime() { if (startTimeInput.value) localStorage.setItem(TIME_KEY, startTimeInput.value); }
 
@@ -450,26 +500,42 @@
     });
   }
 
+  function saveDrawToHistory(groups, startTimeHHMM, waTextValue, presentList) {
+    const record = { id: String(Date.now()), createdAt: new Date().toISOString(), startTime: startTimeHHMM, presentList: presentList.slice(), groups: groups.map(g => g.slice()), whatsapp: waTextValue };
+    history.unshift(record);
+    history = history.slice(0, 100);
+    saveJSON(HISTORY_KEY, history);
+    renderHistory();
+  }
+  function formatDateFr(iso) { try { return new Date(iso).toLocaleString("fr-FR", { dateStyle:"short", timeStyle:"short" }); } catch { return iso; } }
+  function renderHistory() {
+    history = loadJSON(HISTORY_KEY, []);
+    historyStatus.textContent = `${history.length} tirage${history.length > 1 ? "s" : ""}`;
+    historyList.innerHTML = "";
+    if (!history.length) { historyList.innerHTML = `<div class="placeholder">Aucun tirage enregistré pour le moment.</div>`; return; }
+    history.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "historyItem";
+      div.innerHTML = `<div class="historyTop"><div><div class="historyTitle">Tirage du ${formatDateFr(item.createdAt)}</div><div class="historyMeta">${item.presentList?.length || 0} présents · 1er départ ${item.startTime || "--:--"} · ${item.groups?.length || 0} départs</div></div><div class="historyActions"><button class="smallBtn" data-action="copy" data-id="${item.id}">Copier</button><button class="smallBtn danger" data-action="delete" data-id="${item.id}">Supprimer</button></div></div><div class="historyText">${item.whatsapp || ""}</div>`;
+      historyList.appendChild(div);
+    });
+  }
+
   function generate() {
     try {
       const presentList = getPresentList();
       const forcedGroup = getForcedGroupOption();
-      persistForceOption();
-      persistStartTime();
+      persistForceOption(); persistStartTime();
       const groups = makeGroups(presentList, forcedGroup);
       renderResult(groups, startTimeInput.value);
-      waText.value = formatWA(groups, startTimeInput.value);
+      const whatsapp = formatWA(groups, startTimeInput.value);
+      waText.value = whatsapp;
+      saveDrawToHistory(groups, startTimeInput.value, whatsapp, presentList);
       setStatus("OK", "ok");
-    } catch (e) {
-      resultEl.innerHTML = ""; waText.value = ""; setStatus(e.message, "warn");
-    }
+    } catch (e) { resultEl.innerHTML = ""; waText.value = ""; setStatus(e.message, "warn"); }
   }
-
-  async function copyWA() {
-    if (!waText.value) return;
-    try { await navigator.clipboard.writeText(waText.value); setStatus("Copié", "ok"); }
-    catch { setStatus("Copie impossible. Copie manuelle.", "warn"); }
-  }
+  async function copyWA() { if (!waText.value) return; try { await navigator.clipboard.writeText(waText.value); setStatus("Copié", "ok"); } catch { setStatus("Copie impossible. Copie manuelle.", "warn"); } }
+  async function copyText(text) { try { await navigator.clipboard.writeText(text || ""); } catch { alert("Copie impossible. Copie manuelle."); } }
   function clearText() { resultEl.innerHTML = ""; waText.value = ""; setStatus("Prêt", ""); }
 
   function addPlayer() {
@@ -487,6 +553,7 @@
     guests.push(name); guests.sort(); saveJSON(GUESTS_KEY, guests); input.value = ""; renderAll(); fillForceSelectors();
   }
 
+  document.querySelectorAll(".tabBtn").forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
   document.getElementById("btnGenerate").addEventListener("click", generate);
   document.getElementById("btnRegenerate").addEventListener("click", generate);
   document.getElementById("btnGenerateSticky").addEventListener("click", generate);
@@ -497,19 +564,33 @@
   document.getElementById("btnAddGuest").addEventListener("click", addGuest);
   document.getElementById("newPlayerName").addEventListener("keypress", (e) => { if (e.key === "Enter") addPlayer(); });
   document.getElementById("newGuestName").addEventListener("keypress", (e) => { if (e.key === "Enter") addGuest(); });
-
   document.getElementById("btnAllPlayers").addEventListener("click", () => { players.forEach(p => presence[`P:${p}`] = true); savePresence(); renderAll(); });
   document.getElementById("btnNoneAll").addEventListener("click", () => { [...players.map(p=>`P:${p}`), ...guests.map(g=>`G:${g}`)].forEach(k => presence[k] = false); savePresence(); renderAll(); });
   document.getElementById("btnClearForce").addEventListener("click", () => { ["force1","force2","force3","force4"].forEach(id => document.getElementById(id).value = ""); document.getElementById("forceLast").checked = false; saveJSON(FORCE_KEY, { players: [], last: false }); });
-  ["force1","force2","force3","force4"].forEach(id => { document.getElementById(id).addEventListener("change", persistForceOption); });
+  ["force1","force2","force3","force4"].forEach(id => document.getElementById(id).addEventListener("change", persistForceOption));
   document.getElementById("forceLast").addEventListener("change", persistForceOption);
   startTimeInput.addEventListener("change", persistStartTime);
+  document.getElementById("btnRefreshHistory").addEventListener("click", renderHistory);
+  document.getElementById("btnClearHistory").addEventListener("click", () => { if (!confirm("Effacer tout l’historique des tirages ?")) return; history = []; saveJSON(HISTORY_KEY, history); renderHistory(); });
+  historyList.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("button[data-action]"); if (!btn) return;
+    const item = history.find(x => x.id === btn.dataset.id); if (!item) return;
+    if (btn.dataset.action === "copy") copyText(item.whatsapp || "");
+    if (btn.dataset.action === "delete") { if (!confirm("Supprimer ce tirage de l’historique ?")) return; history = history.filter(x => x.id !== btn.dataset.id); saveJSON(HISTORY_KEY, history); renderHistory(); }
+  });
 
-  function renderAll() { renderTiles(players, playersGrid, "P"); renderTiles(guests, guestsGrid, "G"); updateCount(); }
+  function renderAll() {
+    renderPresenceTiles(players, playersGrid, "P");
+    renderPresenceTiles(guests, guestsGrid, "G");
+    renderAdminTiles(players, playersAdminGrid, "P");
+    renderAdminTiles(guests, guestsAdminGrid, "G");
+    updateCount();
+  }
 
   fillForceSelectors();
   loadStartTime();
   renderAll();
+  renderHistory();
   setStatus("Prêt", "");
 </script>
 </body>
