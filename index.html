@@ -24,11 +24,11 @@
       --muted: rgba(15, 23, 42, .62);
       --shadow: 0 10px 28px rgba(2, 6, 23, .08);
       --radius: 16px;
-
-      --accent: #0ea37a;   /* vert golf */
+      --accent: #0ea37a;
       --accent2:#0b7c5d;
       --accentSoft: rgba(14, 163, 122, .12);
-
+      --danger: #b91c1c;
+      --dangerSoft: #fee2e2;
       --tap: 46px;
     }
 
@@ -43,338 +43,102 @@
       color: var(--text);
     }
 
-    .wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 18px 14px 96px;
-    }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px 14px 96px; }
 
-    header{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom: 14px;
-    }
-    h1{
-      margin:0;
-      font-size: 22px;
-      letter-spacing:.2px;
-    }
-    .subtitle{
-      margin-top:6px;
-      color: var(--muted);
-      font-size: 13px;
-      max-width: 70ch;
-    }
+    header{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom: 14px; }
+    h1{ margin:0; font-size: 22px; letter-spacing:.2px; }
+    .subtitle{ margin-top:6px; color: var(--muted); font-size: 13px; max-width: 70ch; }
 
     .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.7);
-      border-radius: 999px;
-      box-shadow: 0 6px 18px rgba(2,6,23,.06);
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
+      display:inline-flex; align-items:center; gap:10px; padding: 10px 12px;
+      border: 1px solid var(--border); background: rgba(255,255,255,.7);
+      border-radius: 999px; box-shadow: 0 6px 18px rgba(2,6,23,.06);
+      font-size: 12px; color: var(--muted); white-space: nowrap;
     }
-    .dot{
-      width:10px; height:10px; border-radius:999px;
-      background: #f59e0b;
-      box-shadow: 0 0 0 4px rgba(245,158,11,.18);
-    }
-    .dot.ok{
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(14,163,122,.18);
-    }
+    .dot{ width:10px; height:10px; border-radius:999px; background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
+    .dot.ok{ background: var(--accent); box-shadow: 0 0 0 4px rgba(14,163,122,.18); }
 
-    .grid2{
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 14px;
-    }
-    @media (max-width: 980px){
-      .grid2{ grid-template-columns: 1fr; }
-    }
+    .grid2{ display:grid; grid-template-columns: 1.05fr .95fr; gap: 14px; }
+    @media (max-width: 980px){ .grid2{ grid-template-columns: 1fr; } }
 
-    .card{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .cardHead{
-      padding: 14px 14px 12px;
-      border-bottom: 1px solid rgba(15,23,42,.08);
-      background: linear-gradient(180deg, rgba(14,163,122,.06), transparent);
-    }
-    .cardTitleRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-    }
-    .cardTitle{
-      font-weight: 800;
-      letter-spacing:.2px;
-      font-size: 14px;
-    }
-    .status{
-      font-size: 12px;
-      color: var(--muted);
-    }
+    .card{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .cardHead{ padding: 14px 14px 12px; border-bottom: 1px solid rgba(15,23,42,.08); background: linear-gradient(180deg, rgba(14,163,122,.06), transparent); }
+    .cardTitleRow{ display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+    .cardTitle{ font-weight: 800; letter-spacing:.2px; font-size: 14px; }
+    .status{ font-size: 12px; color: var(--muted); }
     .status.ok{ color: var(--accent2); font-weight: 700; }
     .status.warn{ color: #b45309; font-weight: 700; }
-
     .cardBody{ padding: 14px; }
 
-    .btnRow{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
+    .btnRow{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
     .btn{
-      height: var(--tap);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--text);
-      font-weight: 800;
-      letter-spacing:.2px;
-      cursor: pointer;
+      height: var(--tap); border-radius: 14px; border: 1px solid var(--border); background: #fff;
+      color: var(--text); font-weight: 800; letter-spacing:.2px; cursor: pointer;
       transition: transform .05s ease, box-shadow .15s ease, border-color .15s ease;
     }
     .btn:active{ transform: translateY(1px); }
-    .btn.primary{
-      border-color: rgba(14,163,122,.35);
-      background: linear-gradient(135deg, rgba(14,163,122,.14), rgba(14,163,122,.06));
-      box-shadow: 0 10px 22px rgba(14,163,122,.12);
-    }
-    .btn.ghost{
-      background: #fff;
-      color: var(--muted);
-      font-weight: 750;
-    }
+    .btn.primary{ border-color: rgba(14,163,122,.35); background: linear-gradient(135deg, rgba(14,163,122,.14), rgba(14,163,122,.06)); box-shadow: 0 10px 22px rgba(14,163,122,.12); }
+    .btn.ghost{ background: #fff; color: var(--muted); font-weight: 750; }
 
-    .fields{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    @media (max-width: 520px){
-      .fields{ grid-template-columns: 1fr; }
-    }
-
+    .fields{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    @media (max-width: 520px){ .fields{ grid-template-columns: 1fr; } }
     .field{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(2,6,23,.02);
-      border-radius: 14px;
+      display:flex; align-items:center; justify-content: space-between; gap: 10px;
+      padding: 10px 12px; border: 1px solid rgba(15,23,42,.10);
+      background: rgba(2,6,23,.02); border-radius: 14px;
     }
-    .field label{
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 800;
-      letter-spacing: .2px;
-      white-space: nowrap;
-    }
-    input[type="time"], select{
-      height: 40px;
-      border-radius: 12px;
-      border: 1px solid rgba(15,23,42,.14);
-      background: #fff;
-      color: var(--text);
-      padding: 0 10px;
-      outline: none;
+    .field label{ font-size: 12px; color: var(--muted); font-weight: 800; letter-spacing: .2px; white-space: nowrap; }
+    input[type="time"], select, input[type="text"]{
+      height: 40px; border-radius: 12px; border: 1px solid rgba(15,23,42,.14);
+      background: #fff; color: var(--text); padding: 0 10px; outline: none;
     }
     select{ min-width: 150px; }
+    input[type="text"]{ min-width: 180px; }
 
-    .hint{
-      margin-top: 8px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    details{
-      margin-top: 12px;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(2,6,23,.015);
-      border-radius: 14px;
-      overflow:hidden;
-    }
-    summary{
-      list-style:none;
-      cursor:pointer;
-      padding: 12px 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      font-weight: 900;
-      letter-spacing:.2px;
-    }
+    .hint{ margin-top: 8px; font-size: 12px; color: var(--muted); }
+    details{ margin-top: 12px; border: 1px solid rgba(15,23,42,.10); background: rgba(2,6,23,.015); border-radius: 14px; overflow:hidden; }
+    summary{ list-style:none; cursor:pointer; padding: 12px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight: 900; letter-spacing:.2px; }
     summary::-webkit-details-marker{ display:none; }
+    .sectionBody{ padding: 10px 12px 12px; border-top: 1px solid rgba(15,23,42,.08); }
 
-    .sectionBody{
-      padding: 10px 12px 12px;
-      border-top: 1px solid rgba(15,23,42,.08);
-    }
-
-    /* Grille joueurs : 2 colonnes iPhone, 3 tablette, 4 desktop */
-    .playersGrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-    }
-    @media (min-width: 700px){
-      .playersGrid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-    }
-    @media (min-width: 980px){
-      .playersGrid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-    }
+    .playersGrid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    @media (min-width: 700px){ .playersGrid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
+    @media (min-width: 980px){ .playersGrid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
 
     .tile{
-      border: 1px solid rgba(15,23,42,.10);
-      background: #fff;
-      border-radius: 14px;
-      padding: 10px 10px;
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      min-height: 46px;
+      border: 1px solid rgba(15,23,42,.10); background: #fff; border-radius: 14px;
+      padding: 10px 10px; display:flex; align-items:center; justify-content: space-between;
+      gap: 10px; min-height: 46px;
     }
-    .tile .name{
-      font-weight: 900;
-      letter-spacing:.25px;
-      font-size: 13px;
+    .tile .name{ font-weight: 900; letter-spacing:.25px; font-size: 13px; }
+    .tileLeft{ display:flex; align-items:center; gap:8px; min-width:0; }
+    .deleteBtn{
+      border:none; background: var(--dangerSoft); color: var(--danger); border-radius:8px;
+      width:24px; height:24px; font-size:14px; line-height:1; cursor:pointer; font-weight:900;
+      flex:0 0 auto;
     }
 
-    /* Toggle clairement visible */
     input.cb{ display:none; }
-    .toggle{
-      width: 46px;
-      height: 26px;
-      border-radius: 999px;
-      border: 1px solid rgba(15,23,42,.18);
-      background: rgba(2,6,23,.06);
-      position: relative;
-      flex: 0 0 auto;
-    }
-    .toggle::after{
-      content:"";
-      position:absolute;
-      top: 2px;
-      left: 2px;
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      background: #fff;
-      box-shadow: 0 8px 18px rgba(2,6,23,.18);
-      transition: left .16s ease, background .16s ease;
-    }
-    input.cb:checked + .toggle{
-      background: rgba(14,163,122,.30);
-      border-color: rgba(14,163,122,.55);
-    }
-    input.cb:checked + .toggle::after{
-      left: 22px;
-      background: #eafff7;
-    }
+    .toggle{ width: 46px; height: 26px; border-radius: 999px; border: 1px solid rgba(15,23,42,.18); background: rgba(2,6,23,.06); position: relative; flex: 0 0 auto; }
+    .toggle::after{ content:""; position:absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 999px; background: #fff; box-shadow: 0 8px 18px rgba(2,6,23,.18); transition: left .16s ease, background .16s ease; }
+    input.cb:checked + .toggle{ background: rgba(14,163,122,.30); border-color: rgba(14,163,122,.55); }
+    input.cb:checked + .toggle::after{ left: 22px; background: #eafff7; }
 
-    .optionsRow{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .checkline{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 750;
-    }
+    .optionsRow{ display:flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .checkline{ display:flex; align-items:center; gap:8px; font-size: 12px; color: var(--muted); font-weight: 750; }
+    .manageBlock{ margin-bottom:18px; }
+    .manageTitle{ font-weight:900; margin-bottom:8px; }
 
-    /* Résultat */
-    .resultList{
-      display:grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .resultItem{
-      display:flex;
-      gap: 12px;
-      align-items:flex-start;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(14,163,122,.05);
-      border-radius: 14px;
-      padding: 10px 12px;
-    }
-    .timeBadge{
-      min-width: 72px;
-      text-align:center;
-      border-radius: 12px;
-      padding: 8px 10px;
-      background: var(--accentSoft);
-      border: 1px solid rgba(14,163,122,.22);
-      color: var(--accent2);
-      font-weight: 950;
-      letter-spacing: .3px;
-    }
-    .playersLine{
-      font-weight: 800;
-      font-size: 13px;
-      color: var(--text);
-      margin-top: 2px;
-    }
+    .resultList{ display:grid; gap: 10px; margin-top: 12px; }
+    .resultItem{ display:flex; gap: 12px; align-items:flex-start; border: 1px solid rgba(15,23,42,.10); background: rgba(14,163,122,.05); border-radius: 14px; padding: 10px 12px; }
+    .timeBadge{ min-width: 72px; text-align:center; border-radius: 12px; padding: 8px 10px; background: var(--accentSoft); border: 1px solid rgba(14,163,122,.22); color: var(--accent2); font-weight: 950; letter-spacing: .3px; }
+    .playersLine{ font-weight: 800; font-size: 13px; color: var(--text); margin-top: 2px; }
 
-    textarea{
-      width:100%;
-      min-height: 160px;
-      border-radius: 14px;
-      border: 1px solid rgba(15,23,42,.12);
-      background: #fff;
-      color: var(--text);
-      padding: 12px;
-      outline: none;
-      resize: vertical;
-      font-size: 13px;
-      line-height: 1.45;
-    }
+    textarea{ width:100%; min-height: 160px; border-radius: 14px; border: 1px solid rgba(15,23,42,.12); background: #fff; color: var(--text); padding: 12px; outline: none; resize: vertical; font-size: 13px; line-height: 1.45; }
 
-    /* Barre d’actions collée en bas (mobile) */
-    .stickyBar{
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      padding: 10px 12px 12px;
-      background: linear-gradient(180deg, rgba(246,250,247,0), rgba(246,250,247,.92));
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(15,23,42,.08);
-    }
-    .stickyInner{
-      max-width: 1100px;
-      margin: 0 auto;
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 10px;
-    }
-    @media (min-width: 981px){
-      .stickyBar{ display:none; }
-      .wrap{ padding-bottom: 22px; }
-    }
+    .stickyBar{ position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 12px 12px; background: linear-gradient(180deg, rgba(246,250,247,0), rgba(246,250,247,.92)); backdrop-filter: blur(10px); border-top: 1px solid rgba(15,23,42,.08); }
+    .stickyInner{ max-width: 1100px; margin: 0 auto; display:grid; grid-template-columns: 1.1fr .9fr; gap: 10px; }
+    @media (min-width: 981px){ .stickyBar{ display:none; } .wrap{ padding-bottom: 22px; } }
   </style>
 </head>
 
@@ -383,117 +147,80 @@
     <header>
       <div>
         <h1>Draw</h1>
-        <div class="subtitle">
-          Coche les présents, choisis le 1er départ, puis génère. Les départs sont espacés de 8 minutes.
-        </div>
+        <div class="subtitle">Coche les présents, choisis le 1er départ, puis génère. Les départs sont espacés de 8 minutes.</div>
       </div>
-      <div class="pill">
-        <span class="dot" id="countDot"></span>
-        <span id="countText">0 présents</span>
-      </div>
+      <div class="pill"><span class="dot" id="countDot"></span><span id="countText">0 présents</span></div>
     </header>
 
     <div class="grid2">
-      <!-- Sélection -->
       <section class="card">
         <div class="cardHead">
-          <div class="cardTitleRow">
-            <div class="cardTitle">Sélection</div>
-            <div class="status">Coches mémorisées</div>
-          </div>
-
-          <div class="btnRow" style="margin-top:10px;">
-            <button class="btn primary" id="btnGenerate">Générer</button>
-            <button class="btn" id="btnRegenerate">Regénérer</button>
-          </div>
-
-          <div class="btnRow">
-            <button class="btn ghost" id="btnAllPlayers">Tout cocher (joueurs)</button>
-            <button class="btn ghost" id="btnNoneAll">Tout décocher</button>
-          </div>
-
+          <div class="cardTitleRow"><div class="cardTitle">Sélection</div><div class="status">Coches mémorisées</div></div>
+          <div class="btnRow" style="margin-top:10px;"><button class="btn primary" id="btnGenerate">Générer</button><button class="btn" id="btnRegenerate">Regénérer</button></div>
+          <div class="btnRow"><button class="btn ghost" id="btnAllPlayers">Tout cocher (joueurs)</button><button class="btn ghost" id="btnNoneAll">Tout décocher</button></div>
           <div class="fields">
-            <div class="field">
-              <label for="startTime">1er départ</label>
-              <input type="time" id="startTime" />
-            </div>
-            <div class="field">
-              <label>Intervalle</label>
-              <div style="font-weight:950; color:var(--accent2)">+8 min</div>
-            </div>
+            <div class="field"><label for="startTime">1er départ</label><input type="time" id="startTime" /></div>
+            <div class="field"><label>Intervalle</label><div style="font-weight:950; color:var(--accent2)">+8 min</div></div>
           </div>
-
           <div class="hint">Le WhatsApp affichera uniquement les horaires et les joueurs.</div>
         </div>
 
         <div class="cardBody">
           <details open>
-            <summary>
-              Joueurs
-              <span style="color:var(--muted); font-weight:800;">▼</span>
-            </summary>
+            <summary>Joueurs <span style="color:var(--muted); font-weight:800;">▼</span></summary>
+            <div class="sectionBody"><div class="playersGrid" id="playersGrid"></div></div>
+          </details>
+
+          <details>
+            <summary>Invités <span style="color:var(--muted); font-weight:800;">▼</span></summary>
+            <div class="sectionBody"><div class="playersGrid" id="guestsGrid"></div></div>
+          </details>
+
+          <details>
+            <summary>Gestion des joueurs <span style="color:var(--muted); font-weight:800;">▼</span></summary>
             <div class="sectionBody">
-              <div class="playersGrid" id="playersGrid"></div>
+              <div class="manageBlock">
+                <div class="manageTitle">Ajouter un joueur</div>
+                <div class="optionsRow">
+                  <input type="text" id="newPlayerName" placeholder="Nom ou initiales">
+                  <button class="btn" id="btnAddPlayer" style="height:40px;padding:0 14px;">Ajouter</button>
+                </div>
+              </div>
+              <div class="manageBlock">
+                <div class="manageTitle">Ajouter un invité</div>
+                <div class="optionsRow">
+                  <input type="text" id="newGuestName" placeholder="Nom invité">
+                  <button class="btn" id="btnAddGuest" style="height:40px;padding:0 14px;">Ajouter</button>
+                </div>
+              </div>
+              <div class="hint">Les listes sont sauvegardées automatiquement sur cet appareil. Le bouton rouge × supprime un joueur ou un invité.</div>
             </div>
           </details>
 
           <details>
-            <summary>
-              Invités
-              <span style="color:var(--muted); font-weight:800;">▼</span>
-            </summary>
-            <div class="sectionBody">
-              <div class="playersGrid" id="guestsGrid"></div>
-            </div>
-          </details>
-
-          <details>
-            <summary>
-              Options
-              <span style="color:var(--muted); font-weight:800;">▼</span>
-            </summary>
+            <summary>Options <span style="color:var(--muted); font-weight:800;">▼</span></summary>
             <div class="sectionBody">
               <div class="optionsRow">
                 <select id="force1"></select>
                 <select id="force2"></select>
                 <select id="force3"></select>
                 <select id="force4"></select>
-
-                <label class="checkline">
-                  <input type="checkbox" id="forceLast" />
-                  Groupe forcé en dernière partie
-                </label>
-
-                <button class="btn ghost" id="btnClearForce" style="height:40px; padding:0 12px;">
-                  Désactiver
-                </button>
+                <label class="checkline"><input type="checkbox" id="forceLast" /> Groupe forcé en dernière partie</label>
+                <button class="btn ghost" id="btnClearForce" style="height:40px; padding:0 12px;">Désactiver</button>
               </div>
-
-              <div class="hint">
-                Choisis 2 à 4 joueurs pour les forcer dans le même départ. “Dernière partie” = dernier groupe le plus grand possible (4 si possible, sinon 3), tout en gardant les 4 en fin.
-              </div>
+              <div class="hint">Choisis 2 à 4 joueurs pour les forcer dans le même départ. “Dernière partie” = dernier groupe le plus grand possible (4 si possible, sinon 3), tout en gardant les 4 en fin.</div>
             </div>
           </details>
         </div>
       </section>
 
-      <!-- Résultat -->
       <section class="card">
         <div class="cardHead">
-          <div class="cardTitleRow">
-            <div class="cardTitle">Résultat</div>
-            <div class="status" id="status">Prêt</div>
-          </div>
-
-          <div class="btnRow" style="margin-top:10px;">
-            <button class="btn primary" id="btnCopy">Copier WhatsApp</button>
-            <button class="btn ghost" id="btnClearText">Effacer</button>
-          </div>
+          <div class="cardTitleRow"><div class="cardTitle">Résultat</div><div class="status" id="status">Prêt</div></div>
+          <div class="btnRow" style="margin-top:10px;"><button class="btn primary" id="btnCopy">Copier WhatsApp</button><button class="btn ghost" id="btnClearText">Effacer</button></div>
         </div>
-
         <div class="cardBody">
           <div class="resultList" id="result"></div>
-
           <div style="margin-top:14px; font-weight:950; letter-spacing:.2px;">Texte WhatsApp</div>
           <div class="hint" style="margin-bottom:8px;">Copie/colle tel quel dans WhatsApp.</div>
           <textarea id="waText" readonly></textarea>
@@ -502,183 +229,111 @@
     </div>
   </div>
 
-  <!-- Barre mobile -->
-  <div class="stickyBar">
-    <div class="stickyInner">
-      <button class="btn primary" id="btnGenerateSticky">Générer</button>
-      <button class="btn" id="btnCopySticky">Copier WhatsApp</button>
-    </div>
-  </div>
+  <div class="stickyBar"><div class="stickyInner"><button class="btn primary" id="btnGenerateSticky">Générer</button><button class="btn" id="btnCopySticky">Copier WhatsApp</button></div></div>
 
 <script>
-  // === Listes ===
-  const players = [
-    "RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG",
-    "JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"
-  ];
-  const guests = ["INV1","INV2","INV3"];
+  const DEFAULT_PLAYERS = ["RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG","JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"];
+  const DEFAULT_GUESTS = ["INV1","INV2","INV3"];
 
   const STORAGE_KEY = "draw_presence_v1";
   const FORCE_KEY = "draw_force_v1";
   const TIME_KEY = "draw_start_time_v1";
+  const PLAYERS_KEY = "draw_players_v1";
+  const GUESTS_KEY = "draw_guests_v1";
   const INTERVAL_MIN = 8;
 
   function loadJSON(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return fallback;
-      return JSON.parse(raw);
-    } catch { return fallback; }
+    try { const raw = localStorage.getItem(key); if (!raw) return fallback; return JSON.parse(raw); }
+    catch { return fallback; }
   }
-  function saveJSON(key, obj) {
-    localStorage.setItem(key, JSON.stringify(obj));
-  }
+  function saveJSON(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
 
-  // === Shuffle ===
+  let players = loadJSON(PLAYERS_KEY, DEFAULT_PLAYERS);
+  let guests = loadJSON(GUESTS_KEY, DEFAULT_GUESTS);
+  let presence = loadJSON(STORAGE_KEY, {});
+
+  function normalizeName(value) { return (value || "").trim().toUpperCase(); }
+
   function shuffle(arr) {
     const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
     return a;
   }
 
-  // === Sizes 3 puis 4 ===
   function groupSizes(n) {
     if (n < 3) throw new Error("Il faut au moins 3 joueurs présents.");
-
     const r = n % 4;
     let n3 = 0, n4 = 0;
-
     if (r === 0) { n3 = 0; n4 = n / 4; }
-    else if (r === 1) {
-      if (n < 9) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`);
-      n3 = 3; n4 = (n - 9) / 4;
-    } else if (r === 2) {
-      if (n < 6) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`);
-      n3 = 2; n4 = (n - 6) / 4;
-    } else { // r === 3
-      n3 = 1; n4 = (n - 3) / 4;
-    }
-
-    // 3 d'abord, puis 4 à la fin
+    else if (r === 1) { if (n < 9) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`); n3 = 3; n4 = (n - 9) / 4; }
+    else if (r === 2) { if (n < 6) throw new Error(`Impossible de faire uniquement des groupes de 3/4 avec ${n} joueurs.`); n3 = 2; n4 = (n - 6) / 4; }
+    else { n3 = 1; n4 = (n - 3) / 4; }
     return [...Array(n3).fill(3), ...Array(n4).fill(4)];
   }
 
-  // === Forced group option (2 à 4 joueurs) ===
   function getForcedGroupOption() {
     const ids = ["force1","force2","force3","force4"];
     const picks = ids.map(id => document.getElementById(id)?.value || "").filter(Boolean);
-
-    // Dédupliquer en conservant l'ordre
     const unique = [];
     for (const p of picks) if (!unique.includes(p)) unique.push(p);
-
     const last = document.getElementById("forceLast")?.checked || false;
-
-    // Actif uniquement si 2+ joueurs
     if (unique.length < 2) return null;
-
-    // Limite à 4
     if (unique.length > 4) unique.length = 4;
-
     return { players: unique, last };
   }
 
   function makeGroups(presentList, forcedGroup) {
     const sizes = groupSizes(presentList.length);
     let pool = shuffle(presentList);
-
-    // Normaliser forcedGroup: garder uniquement ceux présents aujourd'hui + dédup
     let forced = null;
+
     if (forcedGroup && Array.isArray(forcedGroup.players)) {
       const wanted = [];
-      for (const p of forcedGroup.players) {
-        if (pool.includes(p) && !wanted.includes(p)) wanted.push(p);
-        if (wanted.length === 4) break;
-      }
+      for (const p of forcedGroup.players) { if (pool.includes(p) && !wanted.includes(p)) wanted.push(p); if (wanted.length === 4) break; }
       if (wanted.length >= 2) forced = { players: wanted, last: !!forcedGroup.last };
     }
 
-    // Retirer les forcés du pool
     if (forced) {
       const set = new Set(forced.players);
       pool = pool.filter(x => !set.has(x));
     }
 
-    // Choisir le groupe cible (index) si forced actif
     let targetIndex = -1;
     let targetSize = null;
-
     if (forced) {
       const k = forced.players.length;
-
       const candidateIndices = [];
-      for (let i = 0; i < sizes.length; i++) {
-        if (sizes[i] >= k) candidateIndices.push(i);
-      }
-      if (candidateIndices.length === 0) {
-        throw new Error(`Impossible de placer ${k} joueurs forcés (aucun groupe de taille suffisante).`);
-      }
-
+      for (let i = 0; i < sizes.length; i++) if (sizes[i] >= k) candidateIndices.push(i);
+      if (candidateIndices.length === 0) throw new Error(`Impossible de placer ${k} joueurs forcés (aucun groupe de taille suffisante).`);
       const canUse3 = (k <= 3) && sizes.includes(3);
       const canUse4 = (k <= 4) && sizes.includes(4);
-
       if (forced.last) {
-        // Dernière partie = dernier groupe du plus grand type possible
-        if (canUse4) targetSize = 4;
-        else if (canUse3) targetSize = 3;
-        else targetSize = 4;
-
-        for (let i = sizes.length - 1; i >= 0; i--) {
-          if (sizes[i] === targetSize && sizes[i] >= k) { targetIndex = i; break; }
-        }
+        if (canUse4) targetSize = 4; else if (canUse3) targetSize = 3; else targetSize = 4;
+        for (let i = sizes.length - 1; i >= 0; i--) if (sizes[i] === targetSize && sizes[i] >= k) { targetIndex = i; break; }
       } else {
-        // Placement "normal" : le plus tôt possible, en privilégiant 3 si possible
-        if (canUse3) targetSize = 3;
-        else if (canUse4) targetSize = 4;
-        else targetSize = 4;
-
-        for (let i = 0; i < sizes.length; i++) {
-          if (sizes[i] === targetSize && sizes[i] >= k) { targetIndex = i; break; }
-        }
+        if (canUse3) targetSize = 3; else if (canUse4) targetSize = 4; else targetSize = 4;
+        for (let i = 0; i < sizes.length; i++) if (sizes[i] === targetSize && sizes[i] >= k) { targetIndex = i; break; }
         if (targetIndex === -1) targetIndex = candidateIndices[0];
       }
-
-      if (targetIndex === -1) {
-        targetIndex = forced.last ? candidateIndices[candidateIndices.length - 1] : candidateIndices[0];
-      }
+      if (targetIndex === -1) targetIndex = forced.last ? candidateIndices[candidateIndices.length - 1] : candidateIndices[0];
     }
 
-    // Construire les groupes
     const groups = [];
     for (let i = 0; i < sizes.length; i++) {
       const sz = sizes[i];
-
       if (forced && i === targetIndex) {
         const g = forced.players.slice();
-        while (g.length < sz) {
-          const next = pool.shift();
-          if (!next) throw new Error("Impossible de compléter le groupe forcé.");
-          g.push(next);
-        }
+        while (g.length < sz) { const next = pool.shift(); if (!next) throw new Error("Impossible de compléter le groupe forcé."); g.push(next); }
         groups.push(g);
       } else {
         const g = [];
-        while (g.length < sz) {
-          const next = pool.shift();
-          if (!next) throw new Error("Erreur interne : groupe incomplet.");
-          g.push(next);
-        }
+        while (g.length < sz) { const next = pool.shift(); if (!next) throw new Error("Erreur interne : groupe incomplet."); g.push(next); }
         groups.push(g);
       }
     }
-
     return groups;
   }
 
-  // === Time utils ===
   function parseTimeHHMM(s) {
     if (!s || typeof s !== "string") return null;
     const m = s.match(/^(\d{2}):(\d{2})$/);
@@ -687,13 +342,8 @@
     if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
     return { hh, mm };
   }
-  function addMinutes(t, minutesToAdd) {
-    const total = (t.hh * 60 + t.mm + minutesToAdd) % (24 * 60);
-    return { hh: Math.floor(total / 60), mm: total % 60 };
-  }
-  function formatHHMM(t) {
-    return `${String(t.hh).padStart(2,"0")}:${String(t.mm).padStart(2,"0")}`;
-  }
+  function addMinutes(t, minutesToAdd) { const total = (t.hh * 60 + t.mm + minutesToAdd) % (24 * 60); return { hh: Math.floor(total / 60), mm: total % 60 }; }
+  function formatHHMM(t) { return `${String(t.hh).padStart(2,"0")}:${String(t.mm).padStart(2,"0")}`; }
   function buildTeeTimes(startHHMM, count, intervalMin) {
     const start = parseTimeHHMM(startHHMM);
     if (!start) return null;
@@ -701,14 +351,12 @@
     for (let i = 0; i < count; i++) times.push(formatHHMM(addMinutes(start, i * intervalMin)));
     return times;
   }
-
   function formatWA(groups, startTimeHHMM) {
     const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
     if (!times) throw new Error("Renseigne un 1er départ valide (HH:MM).");
     return groups.map((g, i) => `${times[i]} : ${g.join(" / ")}`).join("\n");
   }
 
-  // === UI state ===
   const playersGrid = document.getElementById("playersGrid");
   const guestsGrid = document.getElementById("guestsGrid");
   const statusEl = document.getElementById("status");
@@ -718,43 +366,47 @@
   const countText = document.getElementById("countText");
   const countDot = document.getElementById("countDot");
 
-  let presence = loadJSON(STORAGE_KEY, {});
-
   function savePresence() { saveJSON(STORAGE_KEY, presence); }
-
-  function setStatus(text, kind) {
-    statusEl.textContent = text;
-    statusEl.className = "status " + (kind || "");
-  }
+  function setStatus(text, kind) { statusEl.textContent = text; statusEl.className = "status " + (kind || ""); }
 
   function renderTiles(names, container, prefix) {
     container.innerHTML = "";
     names.forEach(name => {
       const key = `${prefix}:${name}`;
       const id = `${prefix}_${name.replace(/\s+/g,"_")}`;
-
       const tile = document.createElement("div");
       tile.className = "tile";
       tile.innerHTML = `
-        <div class="name">${name}</div>
+        <div class="tileLeft">
+          <div class="name">${name}</div>
+          <button class="deleteBtn" data-name="${name}" data-prefix="${prefix}" title="Supprimer">×</button>
+        </div>
         <label style="display:flex; align-items:center; gap:10px;">
           <input class="cb" type="checkbox" id="${id}" ${presence[key] ? "checked" : ""} />
           <span class="toggle" aria-hidden="true"></span>
         </label>
       `;
-
       container.appendChild(tile);
 
       const cb = tile.querySelector("input");
-      cb.addEventListener("change", () => {
-        presence[key] = cb.checked;
+      cb.addEventListener("change", () => { presence[key] = cb.checked; savePresence(); updateCount(); });
+
+      const delBtn = tile.querySelector(".deleteBtn");
+      delBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        const n = delBtn.dataset.name;
+        const p = delBtn.dataset.prefix;
+        if (!confirm(`Supprimer ${n} ?`)) return;
+        if (p === "P") { players = players.filter(x => x !== n); saveJSON(PLAYERS_KEY, players); }
+        else { guests = guests.filter(x => x !== n); saveJSON(GUESTS_KEY, guests); }
+        delete presence[`${p}:${n}`];
         savePresence();
-        updateCount();
+        renderAll();
+        fillForceSelectors();
       });
 
-      // Tap on tile toggles (mobile-friendly)
       tile.addEventListener("click", (ev) => {
-        if (ev.target && (ev.target.tagName === "INPUT" || ev.target.classList.contains("toggle"))) return;
+        if (ev.target && (ev.target.tagName === "INPUT" || ev.target.classList.contains("toggle") || ev.target.classList.contains("deleteBtn"))) return;
         cb.checked = !cb.checked;
         presence[key] = cb.checked;
         savePresence();
@@ -768,57 +420,32 @@
     const presentGuests = guests.filter(g => presence[`G:${g}`]);
     return [...presentPlayers, ...presentGuests];
   }
-
-  function updateCount() {
-    const n = getPresentList().length;
-    countText.textContent = `${n} présents`;
-    countDot.className = "dot" + (n >= 3 ? " ok" : "");
-  }
+  function updateCount() { const n = getPresentList().length; countText.textContent = `${n} présents`; countDot.className = "dot" + (n >= 3 ? " ok" : ""); }
 
   function fillForceSelectors() {
     const all = [...players, ...guests];
     const opts = ["(aucun)", ...all];
     const html = opts.map(v => `<option value="${v === "(aucun)" ? "" : v}">${v}</option>`).join("");
-
-    ["force1","force2","force3","force4"].forEach(id => {
-      const el = document.getElementById(id);
-      el.innerHTML = html;
-    });
-
+    ["force1","force2","force3","force4"].forEach(id => { document.getElementById(id).innerHTML = html; });
     const saved = loadJSON(FORCE_KEY, { players: [], last: false });
-    const savedPlayers = Array.isArray(saved.players) ? saved.players : [];
+    const savedPlayers = Array.isArray(saved.players) ? saved.players.filter(x => all.includes(x)) : [];
     const ids = ["force1","force2","force3","force4"];
-    for (let i = 0; i < ids.length; i++) {
-      document.getElementById(ids[i]).value = savedPlayers[i] || "";
-    }
+    for (let i = 0; i < ids.length; i++) document.getElementById(ids[i]).value = savedPlayers[i] || "";
     document.getElementById("forceLast").checked = !!saved.last;
   }
+  function persistForceOption() { const forced = getForcedGroupOption(); saveJSON(FORCE_KEY, forced ? forced : { players: [], last: false }); }
 
-  function persistForceOption() {
-    const forced = getForcedGroupOption();
-    saveJSON(FORCE_KEY, forced ? forced : { players: [], last: false });
-  }
-
-  function loadStartTime() {
-    const saved = localStorage.getItem(TIME_KEY);
-    startTimeInput.value = saved || "08:00";
-  }
-  function persistStartTime() {
-    if (startTimeInput.value) localStorage.setItem(TIME_KEY, startTimeInput.value);
-  }
+  function loadStartTime() { const saved = localStorage.getItem(TIME_KEY); startTimeInput.value = saved || "08:00"; }
+  function persistStartTime() { if (startTimeInput.value) localStorage.setItem(TIME_KEY, startTimeInput.value); }
 
   function renderResult(groups, startTimeHHMM) {
     resultEl.innerHTML = "";
     const times = buildTeeTimes(startTimeHHMM, groups.length, INTERVAL_MIN);
-
     groups.forEach((g, i) => {
       const item = document.createElement("div");
       item.className = "resultItem";
       const badge = times ? times[i] : `#${i+1}`;
-      item.innerHTML = `
-        <div class="timeBadge">${badge}</div>
-        <div class="playersLine">${g.join(" / ")}</div>
-      `;
+      item.innerHTML = `<div class="timeBadge">${badge}</div><div class="playersLine">${g.join(" / ")}</div>`;
       resultEl.appendChild(item);
     });
   }
@@ -829,76 +456,57 @@
       const forcedGroup = getForcedGroupOption();
       persistForceOption();
       persistStartTime();
-
       const groups = makeGroups(presentList, forcedGroup);
       renderResult(groups, startTimeInput.value);
       waText.value = formatWA(groups, startTimeInput.value);
-
       setStatus("OK", "ok");
     } catch (e) {
-      resultEl.innerHTML = "";
-      waText.value = "";
-      setStatus(e.message, "warn");
+      resultEl.innerHTML = ""; waText.value = ""; setStatus(e.message, "warn");
     }
   }
 
   async function copyWA() {
     if (!waText.value) return;
-    try {
-      await navigator.clipboard.writeText(waText.value);
-      setStatus("Copié", "ok");
-    } catch {
-      setStatus("Copie impossible. Copie manuelle.", "warn");
-    }
+    try { await navigator.clipboard.writeText(waText.value); setStatus("Copié", "ok"); }
+    catch { setStatus("Copie impossible. Copie manuelle.", "warn"); }
+  }
+  function clearText() { resultEl.innerHTML = ""; waText.value = ""; setStatus("Prêt", ""); }
+
+  function addPlayer() {
+    const input = document.getElementById("newPlayerName");
+    const name = normalizeName(input.value);
+    if (!name) return;
+    if (players.includes(name)) { alert("Ce joueur existe déjà."); return; }
+    players.push(name); players.sort(); saveJSON(PLAYERS_KEY, players); input.value = ""; renderAll(); fillForceSelectors();
+  }
+  function addGuest() {
+    const input = document.getElementById("newGuestName");
+    const name = normalizeName(input.value);
+    if (!name) return;
+    if (guests.includes(name)) { alert("Cet invité existe déjà."); return; }
+    guests.push(name); guests.sort(); saveJSON(GUESTS_KEY, guests); input.value = ""; renderAll(); fillForceSelectors();
   }
 
-  function clearText() {
-    resultEl.innerHTML = "";
-    waText.value = "";
-    setStatus("Prêt", "");
-  }
-
-  // === Bindings ===
   document.getElementById("btnGenerate").addEventListener("click", generate);
   document.getElementById("btnRegenerate").addEventListener("click", generate);
   document.getElementById("btnGenerateSticky").addEventListener("click", generate);
-
   document.getElementById("btnCopy").addEventListener("click", copyWA);
   document.getElementById("btnCopySticky").addEventListener("click", copyWA);
-
   document.getElementById("btnClearText").addEventListener("click", clearText);
+  document.getElementById("btnAddPlayer").addEventListener("click", addPlayer);
+  document.getElementById("btnAddGuest").addEventListener("click", addGuest);
+  document.getElementById("newPlayerName").addEventListener("keypress", (e) => { if (e.key === "Enter") addPlayer(); });
+  document.getElementById("newGuestName").addEventListener("keypress", (e) => { if (e.key === "Enter") addGuest(); });
 
-  document.getElementById("btnAllPlayers").addEventListener("click", () => {
-    players.forEach(p => presence[`P:${p}`] = true);
-    savePresence();
-    renderAll();
-  });
-
-  document.getElementById("btnNoneAll").addEventListener("click", () => {
-    [...players.map(p=>`P:${p}`), ...guests.map(g=>`G:${g}`)].forEach(k => presence[k] = false);
-    savePresence();
-    renderAll();
-  });
-
-  document.getElementById("btnClearForce").addEventListener("click", () => {
-    ["force1","force2","force3","force4"].forEach(id => document.getElementById(id).value = "");
-    document.getElementById("forceLast").checked = false;
-    saveJSON(FORCE_KEY, { players: [], last: false });
-  });
-
-  ["force1","force2","force3","force4"].forEach(id => {
-    document.getElementById(id).addEventListener("change", persistForceOption);
-  });
+  document.getElementById("btnAllPlayers").addEventListener("click", () => { players.forEach(p => presence[`P:${p}`] = true); savePresence(); renderAll(); });
+  document.getElementById("btnNoneAll").addEventListener("click", () => { [...players.map(p=>`P:${p}`), ...guests.map(g=>`G:${g}`)].forEach(k => presence[k] = false); savePresence(); renderAll(); });
+  document.getElementById("btnClearForce").addEventListener("click", () => { ["force1","force2","force3","force4"].forEach(id => document.getElementById(id).value = ""); document.getElementById("forceLast").checked = false; saveJSON(FORCE_KEY, { players: [], last: false }); });
+  ["force1","force2","force3","force4"].forEach(id => { document.getElementById(id).addEventListener("change", persistForceOption); });
   document.getElementById("forceLast").addEventListener("change", persistForceOption);
   startTimeInput.addEventListener("change", persistStartTime);
 
-  function renderAll() {
-    renderTiles(players, playersGrid, "P");
-    renderTiles(guests, guestsGrid, "G");
-    updateCount();
-  }
+  function renderAll() { renderTiles(players, playersGrid, "P"); renderTiles(guests, guestsGrid, "G"); updateCount(); }
 
-  // === Init ===
   fillForceSelectors();
   loadStartTime();
   renderAll();
