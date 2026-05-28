@@ -90,9 +90,9 @@
     table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(15,23,42,.10)}
     th,td{padding:9px 8px;border-bottom:1px solid rgba(15,23,42,.08);text-align:left;font-size:13px}th{background:rgba(14,163,122,.07);font-weight:900;color:var(--accent2)}
     .placeholder{color:var(--muted);font-size:14px;line-height:1.5}
-    .stickyBar{position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:10px 12px 12px;background:linear-gradient(180deg,rgba(246,250,247,0),rgba(246,250,247,.92));backdrop-filter:blur(10px);border-top:1px solid rgba(15,23,42,.08)}
-    .stickyInner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.stickyInner .tabBtn{font-size:11px;padding:0 4px;height:42px}
-    @media(min-width:981px){.wrap{padding-bottom:96px}}
+    .stickyBar{position:fixed;left:0;right:0;bottom:0;padding:10px 12px 12px;background:linear-gradient(180deg,rgba(246,250,247,0),rgba(246,250,247,.92));backdrop-filter:blur(10px);border-top:1px solid rgba(15,23,42,.08)}
+    .stickyInner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+    @media(min-width:981px){.stickyBar{display:none}.wrap{padding-bottom:22px}}
   </style>
 </head>
 
@@ -106,7 +106,13 @@
     <div class="pill"><span class="dot" id="countDot"></span><span id="countText">0 présents</span></div>
   </header>
 
-  
+  <nav class="tabs" aria-label="Navigation">
+    <button class="tabBtn active" data-tab="draw">Tirage</button>
+    <button class="tabBtn" data-tab="players">Joueurs</button>
+    <button class="tabBtn" data-tab="history">Historique</button>
+    <button class="tabBtn" data-tab="stats">Stats</button>
+    <button class="tabBtn" data-tab="scores">Scores</button>
+  </nav>
 
   <section class="tabPanel active" id="tab-draw">
     <div class="grid2">
@@ -130,7 +136,7 @@
           <div class="cardTitleRow"><div class="cardTitle">Résultat</div><div class="status" id="status">Prêt</div></div>
           <div class="btnRow three" style="margin-top:10px"><button class="btn primary" id="btnCopy">Copier WhatsApp</button><button class="btn validate" id="btnValidateDraw">Valider ce tirage</button><button class="btn ghost" id="btnClearText">Effacer</button></div>
         </div>
-        <div class="cardBody"><div class="resultList" id="result"></div><details style="margin-top:14px" open><summary>Modifier les flights <span style="color:var(--muted);font-weight:800">▼</span></summary><div class="sectionBody"><div class="hint" style="margin-bottom:8px">Modifie les groupes ici plutôt que dans WhatsApp. Sépare les joueurs par / si tu ajustes manuellement une ligne.</div><div class="scoreList" id="flightEditor"></div><button class="btn validate" id="btnApplyFlights" style="margin-top:10px;width:100%">Appliquer les modifications</button></div></details><div style="margin-top:14px;font-weight:950;letter-spacing:.2px">Texte WhatsApp modifiable</div><div class="hint" style="margin-bottom:8px">Tu peux corriger ce texte avant de copier ou valider.</div><textarea id="waText"></textarea></div>
+        <div class="cardBody"><div class="resultList" id="result"></div><div style="margin-top:14px;font-weight:950;letter-spacing:.2px">Texte WhatsApp modifiable</div><div class="hint" style="margin-bottom:8px">Tu peux corriger ce texte avant de copier ou valider.</div><textarea id="waText"></textarea></div>
       </section>
     </div>
   </section>
@@ -159,7 +165,7 @@
   </section>
 </div>
 
-<div class="stickyBar"><div class="stickyInner"><button type="button" class="btn tabBtn active" data-tab="draw">Tirage</button><button type="button" class="btn tabBtn" data-tab="scores">Scores</button><button type="button" class="btn tabBtn" data-tab="stats">Stats</button><button type="button" class="btn tabBtn" data-tab="history">Historique</button><button type="button" class="btn tabBtn" data-tab="players">Joueurs</button></div></div>
+<div class="stickyBar"><div class="stickyInner"><button class="btn tabBtn active" data-tab="draw">Tirage</button><button class="btn tabBtn" data-tab="players">Joueurs</button><button class="btn tabBtn" data-tab="history">Historique</button><button class="btn tabBtn" data-tab="stats">Stats</button><button class="btn tabBtn" data-tab="scores">Scores</button></div></div>
 
 <script>
 const DEFAULT_PLAYERS=["RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG","JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"];
@@ -184,16 +190,7 @@ function formatWA(groups,startTimeHHMM){const times=buildTeeTimes(startTimeHHMM,
 const playersGrid=document.getElementById("playersGrid"),guestsGrid=document.getElementById("guestsGrid"),playersAdminGrid=document.getElementById("playersAdminGrid"),guestsAdminGrid=document.getElementById("guestsAdminGrid"),statusEl=document.getElementById("status"),resultEl=document.getElementById("result"),waText=document.getElementById("waText"),startTimeInput=document.getElementById("startTime"),countText=document.getElementById("countText"),countDot=document.getElementById("countDot"),historyList=document.getElementById("historyList"),historyStatus=document.getElementById("historyStatus");
 function savePresence(){saveJSON(STORAGE_KEY,presence)}
 function setStatus(text,kind){statusEl.textContent=text;statusEl.className="status "+(kind||"")}
-function switchTab(tabName){
-  document.querySelectorAll("[data-tab]").forEach(btn=>btn.classList.toggle("active",btn.dataset.tab===tabName));
-  document.querySelectorAll(".tabPanel").forEach(panel=>{
-    const isActive=panel.id===`tab-${tabName}`;
-    panel.classList.toggle("active",isActive);
-    panel.style.display=isActive?"block":"none";
-  });
-  if(tabName==="history")renderHistory();
-  if(tabName==="scores")renderScoresModule();
-}
+function switchTab(tabName){document.querySelectorAll(".tabBtn").forEach(btn=>btn.classList.toggle("active",btn.dataset.tab===tabName));document.querySelectorAll(".tabPanel").forEach(panel=>panel.classList.toggle("active",panel.id===`tab-${tabName}`));if(tabName==="history")renderHistory();if(tabName==="scores")renderScoresModule()}
 function renderPresenceTiles(names,container,prefix){container.innerHTML="";names.forEach(name=>{const key=`${prefix}:${name}`,id=`${prefix}_${name.replace(/\s+/g,"_")}`;const tile=document.createElement("div");tile.className="tile";tile.innerHTML=`<div class="name">${name}</div><label style="display:flex;align-items:center;gap:10px"><input class="cb" type="checkbox" id="${id}" ${presence[key]?"checked":""} /><span class="toggle" aria-hidden="true"></span></label>`;container.appendChild(tile);const cb=tile.querySelector("input");cb.addEventListener("change",()=>{presence[key]=cb.checked;savePresence();updateCount()});tile.addEventListener("click",ev=>{if(ev.target&&(ev.target.tagName==="INPUT"||ev.target.classList.contains("toggle")))return;cb.checked=!cb.checked;presence[key]=cb.checked;savePresence();updateCount()})})}
 function renderAdminTiles(names,container,prefix){container.innerHTML="";names.forEach(name=>{const tile=document.createElement("div");tile.className="tile";tile.innerHTML=`<div class="tileLeft"><div class="name">${name}</div><button class="deleteBtn" data-name="${name}" data-prefix="${prefix}" title="Supprimer">×</button></div>`;container.appendChild(tile);tile.querySelector(".deleteBtn").addEventListener("click",()=>{if(!confirm(`Supprimer ${name} ?`))return;if(prefix==="P"){players=players.filter(x=>x!==name);saveJSON(PLAYERS_KEY,players)}else{guests=guests.filter(x=>x!==name);saveJSON(GUESTS_KEY,guests)}delete presence[`${prefix}:${name}`];savePresence();renderAll();fillForceSelectors();renderScoresModule()})})}
 function getPresentList(){return[...players.filter(p=>presence[`P:${p}`]),...guests.filter(g=>presence[`G:${g}`])]}
@@ -203,11 +200,6 @@ function persistForceOption(){const forced=getForcedGroupOption();saveJSON(FORCE
 function loadStartTime(){const saved=localStorage.getItem(TIME_KEY);startTimeInput.value=saved||"08:00"}
 function persistStartTime(){if(startTimeInput.value)localStorage.setItem(TIME_KEY,startTimeInput.value)}
 function renderResult(groups,startTimeHHMM){resultEl.innerHTML="";const times=buildTeeTimes(startTimeHHMM,groups.length,INTERVAL_MIN);groups.forEach((g,i)=>{const item=document.createElement("div");item.className="resultItem";const badge=times?times[i]:`#${i+1}`;item.innerHTML=`<div class="timeBadge">${badge}</div><div class="playersLine">${g.join(" / ")}</div>`;resultEl.appendChild(item)})}
-function renderFlightEditor(groups,startTimeHHMM){const box=document.getElementById("flightEditor");if(!box)return;box.innerHTML="";const times=buildTeeTimes(startTimeHHMM,groups.length,INTERVAL_MIN)||[];groups.forEach((g,i)=>{const row=document.createElement("div");row.className="scoreRow";row.innerHTML=`<input type="time" data-flight-time="${i}" value="${times[i]||""}"><input type="text" data-flight-players="${i}" value="${g.join(" / ")}" style="flex:1;min-width:220px"><button class="smallBtn danger" data-remove-flight="${i}">Supprimer</button>`;box.appendChild(row)});const add=document.createElement("button");add.className="smallBtn";add.textContent="Ajouter un départ";add.type="button";add.style.marginTop="6px";add.addEventListener("click",()=>{const current=getFlightsFromEditor();current.groups.push([]);const lastTime=current.times[current.times.length-1]||startTimeInput.value||"08:00";const parsed=parseTimeHHMM(lastTime);current.times.push(parsed?formatHHMM(addMinutes(parsed,INTERVAL_MIN)):"");renderFlightEditor(current.groups.map((g,i)=>g),current.times[0]||startTimeInput.value);document.querySelectorAll("[data-flight-time]").forEach((inp,i)=>inp.value=current.times[i]||"")});box.appendChild(add);box.querySelectorAll("[data-remove-flight]").forEach(btn=>btn.addEventListener("click",()=>{const idx=Number(btn.dataset.removeFlight);const current=getFlightsFromEditor();current.groups.splice(idx,1);current.times.splice(idx,1);renderFlightEditor(current.groups,current.times[0]||startTimeInput.value);document.querySelectorAll("[data-flight-time]").forEach((inp,i)=>inp.value=current.times[i]||"");applyFlightsFromEditor(false)}))}
-function getFlightsFromEditor(){const rows=Array.from(document.querySelectorAll("#flightEditor .scoreRow"));const groups=[],times=[];rows.forEach(row=>{const t=row.querySelector("[data-flight-time]")?.value||"";const raw=row.querySelector("[data-flight-players]")?.value||"";const names=raw.split(/[\/;,|]+/).map(canonicalPlayerName).filter(Boolean);const uniqueNames=[];for(const n of names)if(!uniqueNames.includes(n))uniqueNames.push(n);if(uniqueNames.length){groups.push(uniqueNames);times.push(t)}});return{groups,times}}
-function whatsappFromFlights(groups,times){return groups.map((g,i)=>`${times[i]||`#${i+1}`} : ${g.join(" / ")}`).join("
-")}
-function applyFlightsFromEditor(showStatus=true){const current=getFlightsFromEditor();if(!current.groups.length){if(showStatus)setStatus("Aucun flight à appliquer.","warn");return}lastGeneratedGroups=current.groups.map(g=>g.slice());lastGeneratedPresentList=unique(current.groups.flat());renderResult(current.groups,current.times[0]||startTimeInput.value||"08:00");waText.value=whatsappFromFlights(current.groups,current.times);if(showStatus)setStatus("Flights modifiés","ok")}
 function normalizeNameKey(value){return (value||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9]/g,"").toUpperCase()}
 function canonicalPlayerName(raw){const cleaned=(raw||"").toString().replace(/[•*]/g,"").trim();const key=normalizeNameKey(cleaned);if(!key)return "";const all=[...players,...guests];const found=all.find(p=>normalizeNameKey(p)===key);return found||key}
 function parseValidatedWhatsapp(text){
@@ -252,7 +244,7 @@ function parseValidatedWhatsapp(text){
 function saveDrawToHistoryFromValidation(){const text=waText.value.trim();if(!text){setStatus("Aucun texte WhatsApp à valider.","warn");return}const parsed=parseValidatedWhatsapp(text);if(!parsed.groups.length&&!confirm("Impossible de lire les groupes automatiquement. Enregistrer quand même le texte ?"))return;const record={id:String(Date.now()),createdAt:new Date().toISOString(),startTime:parsed.startTime,presentList:parsed.presentList.length?parsed.presentList:(lastGeneratedPresentList||getPresentList()),groups:parsed.groups.length?parsed.groups:(lastGeneratedGroups||[]),whatsapp:text,validated:true};history.unshift(record);history=history.slice(0,100);saveJSON(HISTORY_KEY,history);renderHistory();fillDrawSelect();setStatus("Tirage validé","ok");switchTab("history")}
 function formatDateFr(iso){try{return new Date(iso).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"})}catch{return iso}}
 function renderHistory(){history=loadJSON(HISTORY_KEY,[]);historyStatus.textContent=`${history.length} tirage${history.length>1?"s":""}`;historyList.innerHTML="";if(!history.length){historyList.innerHTML=`<div class="placeholder">Aucun tirage validé pour le moment.</div>`;return}history.forEach(item=>{const div=document.createElement("div");div.className="historyItem";div.innerHTML=`<div class="historyTop"><div><div class="historyTitle">Tirage validé du ${formatDateFr(item.createdAt)}</div><div class="historyMeta">${item.presentList?.length||0} présents · 1er départ ${item.startTime||"--:--"} · ${item.groups?.length||0} départs</div></div><div class="historyActions"><button class="smallBtn" data-action="copy" data-id="${item.id}">Copier</button><button class="smallBtn danger" data-action="delete" data-id="${item.id}">Supprimer</button></div></div><div class="historyText">${item.whatsapp||""}</div>`;historyList.appendChild(div)})}
-function generate(){try{const presentList=getPresentList(),forcedGroup=getForcedGroupOption();persistForceOption();persistStartTime();const groups=makeGroups(presentList,forcedGroup);lastGeneratedGroups=groups.map(g=>g.slice());lastGeneratedPresentList=presentList.slice();renderResult(groups,startTimeInput.value);renderFlightEditor(groups,startTimeInput.value);waText.value=formatWA(groups,startTimeInput.value);setStatus("Brouillon généré","ok")}catch(e){resultEl.innerHTML="";waText.value="";lastGeneratedGroups=null;lastGeneratedPresentList=null;setStatus(e.message,"warn")}}
+function generate(){try{const presentList=getPresentList(),forcedGroup=getForcedGroupOption();persistForceOption();persistStartTime();const groups=makeGroups(presentList,forcedGroup);lastGeneratedGroups=groups.map(g=>g.slice());lastGeneratedPresentList=presentList.slice();renderResult(groups,startTimeInput.value);waText.value=formatWA(groups,startTimeInput.value);setStatus("Brouillon généré","ok")}catch(e){resultEl.innerHTML="";waText.value="";lastGeneratedGroups=null;lastGeneratedPresentList=null;setStatus(e.message,"warn")}}
 async function copyWA(){if(!waText.value)return;try{await navigator.clipboard.writeText(waText.value);setStatus("Copié","ok")}catch{setStatus("Copie impossible. Copie manuelle.","warn")}}
 async function copyText(text){try{await navigator.clipboard.writeText(text||"")}catch{alert("Copie impossible. Copie manuelle.")}}
 function clearText(){resultEl.innerHTML="";waText.value="";lastGeneratedGroups=null;lastGeneratedPresentList=null;setStatus("Prêt","")}
@@ -279,48 +271,13 @@ function tableHTML(headers,rows){return`<table><thead><tr>${headers.map(h=>`<th>
 function renderScoresModule(){fillDrawSelect();fillNearestSelectors();renderStrokeInputs();renderDayRanking();renderAnnualRanking();renderNearestRanking();renderScoreDays()}
 function editScoreDay(id){const day=scoreDays.find(d=>d.id===id);if(!day)return;document.getElementById("scoreDate").value=day.date;document.getElementById("scoreDrawSelect").value=day.drawId||"";currentScorePlayers=unique(day.scores.map(s=>s.player));const map={};day.scores.forEach(s=>map[s.player]=s.stableford);renderScoreInputs(map);["near1","near2","near3","near4","near5"].forEach((id,i)=>document.getElementById(id).value=(day.nearest||[])[i]||"");switchTab("scores");setScoreStatus("Journée chargée pour modification","ok")}
 function clearScores(){if(!confirm("Effacer toutes les journées de scores ?"))return;scoreDays=[];saveJSON(SCORE_DAYS_KEY,scoreDays);renderScoresModule()}
-document.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-tab]");if(!btn)return;ev.preventDefault();switchTab(btn.dataset.tab)});
-document.getElementById("btnGenerate").addEventListener("click",generate);document.getElementById("btnRegenerate").addEventListener("click",generate);document.getElementById("btnCopy").addEventListener("click",copyWA);document.getElementById("btnValidateDraw").addEventListener("click",()=>{applyFlightsFromEditor(false);saveDrawToHistoryFromValidation()});document.getElementById("btnApplyFlights").addEventListener("click",()=>applyFlightsFromEditor(true));document.getElementById("btnClearText").addEventListener("click",clearText);document.getElementById("btnAddPlayer").addEventListener("click",addPlayer);document.getElementById("btnAddGuest").addEventListener("click",addGuest);document.getElementById("newPlayerName").addEventListener("keypress",e=>{if(e.key==="Enter")addPlayer()});document.getElementById("newGuestName").addEventListener("keypress",e=>{if(e.key==="Enter")addGuest()});
+document.querySelectorAll(".tabBtn").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+document.getElementById("btnGenerate").addEventListener("click",generate);document.getElementById("btnRegenerate").addEventListener("click",generate);document.getElementById("btnCopy").addEventListener("click",copyWA);document.getElementById("btnValidateDraw").addEventListener("click",saveDrawToHistoryFromValidation);document.getElementById("btnClearText").addEventListener("click",clearText);document.getElementById("btnAddPlayer").addEventListener("click",addPlayer);document.getElementById("btnAddGuest").addEventListener("click",addGuest);document.getElementById("newPlayerName").addEventListener("keypress",e=>{if(e.key==="Enter")addPlayer()});document.getElementById("newGuestName").addEventListener("keypress",e=>{if(e.key==="Enter")addGuest()});
 document.getElementById("btnAllPlayers").addEventListener("click",()=>{players.forEach(p=>presence[`P:${p}`]=true);savePresence();renderAll()});document.getElementById("btnNoneAll").addEventListener("click",()=>{[...players.map(p=>`P:${p}`),...guests.map(g=>`G:${g}`)].forEach(k=>presence[k]=false);savePresence();renderAll()});document.getElementById("btnClearForce").addEventListener("click",()=>{["force1","force2","force3","force4"].forEach(id=>document.getElementById(id).value="");document.getElementById("forceLast").checked=false;saveJSON(FORCE_KEY,{players:[],last:false})});["force1","force2","force3","force4"].forEach(id=>document.getElementById(id).addEventListener("change",persistForceOption));document.getElementById("forceLast").addEventListener("change",persistForceOption);startTimeInput.addEventListener("change",persistStartTime);
 document.getElementById("btnRefreshHistory").addEventListener("click",renderHistory);document.getElementById("btnClearHistory").addEventListener("click",()=>{if(!confirm("Effacer tout l’historique des tirages validés ?"))return;history=[];saveJSON(HISTORY_KEY,history);renderHistory();fillDrawSelect()});historyList.addEventListener("click",ev=>{const btn=ev.target.closest("button[data-action]");if(!btn)return;const item=history.find(x=>x.id===btn.dataset.id);if(!item)return;if(btn.dataset.action==="copy")copyText(item.whatsapp||"");if(btn.dataset.action==="delete"){if(!confirm("Supprimer ce tirage validé de l’historique ?"))return;history=history.filter(x=>x.id!==btn.dataset.id);saveJSON(HISTORY_KEY,history);renderHistory();fillDrawSelect()}});
 document.getElementById("btnLoadScores").addEventListener("click",prepareScoreEntry);document.getElementById("btnSaveScoreDay").addEventListener("click",saveScoreDay);document.getElementById("btnRefreshScores").addEventListener("click",renderScoresModule);document.getElementById("btnClearScores").addEventListener("click",clearScores);document.getElementById("scoreDaysList").addEventListener("click",ev=>{const btn=ev.target.closest("button[data-score-action]");if(!btn)return;if(btn.dataset.scoreAction==="edit")editScoreDay(btn.dataset.id);if(btn.dataset.scoreAction==="delete"){if(!confirm("Supprimer cette journée de scores ?"))return;scoreDays=scoreDays.filter(d=>d.id!==btn.dataset.id);saveJSON(SCORE_DAYS_KEY,scoreDays);renderScoresModule()}});
 function renderAll(){renderPresenceTiles(players,playersGrid,"P");renderPresenceTiles(guests,guestsGrid,"G");renderAdminTiles(players,playersAdminGrid,"P");renderAdminTiles(guests,guestsAdminGrid,"G");updateCount()}
-document.getElementById("scoreDate").value=todayISO();fillForceSelectors();loadStartTime();renderAll();renderHistory();renderScoresModule();switchTab("draw");setStatus("Prêt","");
-</script>
-<script>
-/* Safety patch: navigation basse autonome + affichage garanti de l'onglet Tirage */
-(function(){
-  function showTab(tabName){
-    document.querySelectorAll('[data-tab]').forEach(function(btn){
-      btn.classList.toggle('active', btn.dataset.tab === tabName);
-    });
-    document.querySelectorAll('.tabPanel').forEach(function(panel){
-      var active = panel.id === 'tab-' + tabName;
-      panel.classList.toggle('active', active);
-      panel.style.display = active ? 'block' : 'none';
-    });
-    try{
-      if(tabName === 'history' && typeof renderHistory === 'function') renderHistory();
-      if(tabName === 'scores' && typeof renderScoresModule === 'function') renderScoresModule();
-    }catch(e){ console.warn(e); }
-  }
-
-  document.addEventListener('click', function(ev){
-    var btn = ev.target.closest('[data-tab]');
-    if(!btn) return;
-    ev.preventDefault();
-    showTab(btn.dataset.tab);
-  });
-
-  window.addEventListener('load', function(){
-    try{
-      if(typeof renderAll === 'function') renderAll();
-      if(typeof fillForceSelectors === 'function') fillForceSelectors();
-      if(typeof loadStartTime === 'function') loadStartTime();
-    }catch(e){ console.warn(e); }
-    showTab('draw');
-  });
-})();
+document.getElementById("scoreDate").value=todayISO();fillForceSelectors();loadStartTime();renderAll();renderHistory();renderScoresModule();setStatus("Prêt","");
 </script>
 </body>
 </html>
