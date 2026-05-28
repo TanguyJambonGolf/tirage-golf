@@ -287,5 +287,40 @@ document.getElementById("btnLoadScores").addEventListener("click",prepareScoreEn
 function renderAll(){renderPresenceTiles(players,playersGrid,"P");renderPresenceTiles(guests,guestsGrid,"G");renderAdminTiles(players,playersAdminGrid,"P");renderAdminTiles(guests,guestsAdminGrid,"G");updateCount()}
 document.getElementById("scoreDate").value=todayISO();fillForceSelectors();loadStartTime();renderAll();renderHistory();renderScoresModule();switchTab("draw");setStatus("Prêt","");
 </script>
+<script>
+/* Safety patch: navigation basse autonome + affichage garanti de l'onglet Tirage */
+(function(){
+  function showTab(tabName){
+    document.querySelectorAll('[data-tab]').forEach(function(btn){
+      btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+    document.querySelectorAll('.tabPanel').forEach(function(panel){
+      var active = panel.id === 'tab-' + tabName;
+      panel.classList.toggle('active', active);
+      panel.style.display = active ? 'block' : 'none';
+    });
+    try{
+      if(tabName === 'history' && typeof renderHistory === 'function') renderHistory();
+      if(tabName === 'scores' && typeof renderScoresModule === 'function') renderScoresModule();
+    }catch(e){ console.warn(e); }
+  }
+
+  document.addEventListener('click', function(ev){
+    var btn = ev.target.closest('[data-tab]');
+    if(!btn) return;
+    ev.preventDefault();
+    showTab(btn.dataset.tab);
+  });
+
+  window.addEventListener('load', function(){
+    try{
+      if(typeof renderAll === 'function') renderAll();
+      if(typeof fillForceSelectors === 'function') fillForceSelectors();
+      if(typeof loadStartTime === 'function') loadStartTime();
+    }catch(e){ console.warn(e); }
+    showTab('draw');
+  });
+})();
+</script>
 </body>
 </html>
