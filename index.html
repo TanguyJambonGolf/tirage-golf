@@ -200,7 +200,47 @@ function persistForceOption(){const forced=getForcedGroupOption();saveJSON(FORCE
 function loadStartTime(){const saved=localStorage.getItem(TIME_KEY);startTimeInput.value=saved||"08:00"}
 function persistStartTime(){if(startTimeInput.value)localStorage.setItem(TIME_KEY,startTimeInput.value)}
 function renderResult(groups,startTimeHHMM){resultEl.innerHTML="";const times=buildTeeTimes(startTimeHHMM,groups.length,INTERVAL_MIN);groups.forEach((g,i)=>{const item=document.createElement("div");item.className="resultItem";const badge=times?times[i]:`#${i+1}`;item.innerHTML=`<div class="timeBadge">${badge}</div><div class="playersLine">${g.join(" / ")}</div>`;resultEl.appendChild(item)})}
-function parseValidatedWhatsapp(text){const lines=(text||"").split(/\n+/).map(x=>x.trim()).filter(Boolean),groups=[],times=[];for(const line of lines){const parts=line.split(":");if(parts.length<2)continue;const maybeTime=parts[0].trim(),rest=parts.slice(1).join(":").trim();if(!rest)continue;const names=rest.split("/").map(x=>x.trim()).filter(Boolean);if(names.length>=2){times.push(maybeTime);groups.push(names)}}const presentSet=new Set();groups.forEach(g=>g.forEach(p=>presentSet.add(p)));return{groups,times,presentList:Array.from(presentSet),startTime:times[0]||startTimeInput.value||""}}
+function normalizeNameKey(value){return (value||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9]/g,"").toUpperCase()}
+function canonicalPlayerName(raw){const cleaned=(raw||"").toString().replace(/[•*]/g,"").trim();const key=normalizeNameKey(cleaned);if(!key)return "";const all=[...players,...guests];const found=all.find(p=>normalizeNameKey(p)===key);return found||key}
+function parseValidatedWhatsapp(text){
+  const rawLines=(text||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  const groups=[];
+  const times=[];
+
+  for(let rawLine of rawLines){
+    let line=rawLine.replace(/^[-–—•*\s]+/,"").trim();
+    let time="";
+    let rest=line;
+
+    const timeMatch=line.match(/^(\d{1,2})\s*[hH:]\s*(\d{2})\s*(?:[:\-–—]\s*)?(.*)$/);
+    if(timeMatch){
+      time=`${String(Number(timeMatch[1])).padStart(2,"0")}:${timeMatch[2]}`;
+      rest=(timeMatch[3]||"").trim();
+    }
+
+    rest=rest
+      .replace(/\s+[–—-]\s+/g,"/")
+      .replace(/[,;|]+/g,"/")
+      .replace(/\s+\/\s+/g,"/")
+      .trim();
+
+    const names=rest.split("/")
+      .map(canonicalPlayerName)
+      .filter(Boolean);
+
+    const uniqueNames=[];
+    for(const n of names) if(!uniqueNames.includes(n)) uniqueNames.push(n);
+
+    if(uniqueNames.length>=2){
+      times.push(time||`#${times.length+1}`);
+      groups.push(uniqueNames);
+    }
+  }
+
+  const presentSet=new Set();
+  groups.forEach(g=>g.forEach(p=>presentSet.add(p)));
+  return{groups,times,presentList:Array.from(presentSet),startTime:times[0]||startTimeInput.value||""}
+}
 function saveDrawToHistoryFromValidation(){const text=waText.value.trim();if(!text){setStatus("Aucun texte WhatsApp à valider.","warn");return}const parsed=parseValidatedWhatsapp(text);if(!parsed.groups.length&&!confirm("Impossible de lire les groupes automatiquement. Enregistrer quand même le texte ?"))return;const record={id:String(Date.now()),createdAt:new Date().toISOString(),startTime:parsed.startTime,presentList:parsed.presentList.length?parsed.presentList:(lastGeneratedPresentList||getPresentList()),groups:parsed.groups.length?parsed.groups:(lastGeneratedGroups||[]),whatsapp:text,validated:true};history.unshift(record);history=history.slice(0,100);saveJSON(HISTORY_KEY,history);renderHistory();fillDrawSelect();setStatus("Tirage validé","ok");switchTab("history")}
 function formatDateFr(iso){try{return new Date(iso).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"})}catch{return iso}}
 function renderHistory(){history=loadJSON(HISTORY_KEY,[]);historyStatus.textContent=`${history.length} tirage${history.length>1?"s":""}`;historyList.innerHTML="";if(!history.length){historyList.innerHTML=`<div class="placeholder">Aucun tirage validé pour le moment.</div>`;return}history.forEach(item=>{const div=document.createElement("div");div.className="historyItem";div.innerHTML=`<div class="historyTop"><div><div class="historyTitle">Tirage validé du ${formatDateFr(item.createdAt)}</div><div class="historyMeta">${item.presentList?.length||0} présents · 1er départ ${item.startTime||"--:--"} · ${item.groups?.length||0} départs</div></div><div class="historyActions"><button class="smallBtn" data-action="copy" data-id="${item.id}">Copier</button><button class="smallBtn danger" data-action="delete" data-id="${item.id}">Supprimer</button></div></div><div class="historyText">${item.whatsapp||""}</div>`;historyList.appendChild(div)})}
