@@ -150,15 +150,23 @@
   <section class="tabPanel" id="tab-stats"><section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Statistiques</div><div class="status">À venir</div></div></div><div class="cardBody"><div class="placeholder">Prochaine étape : présence, partenaires fréquents et anti-répétition à partir des tirages validés.</div></div></section></section>
 
   <section class="tabPanel" id="tab-scores">
-    <div class="grid2">
-      <section class="card">
-        <div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Nouvelle journée / saisie scores</div><div class="status" id="scoreStatus">Prêt</div></div><div class="fields"><div class="field"><label>Date</label><input type="date" id="scoreDate"></div><div class="field"><label>Tirage validé</label><select id="scoreDrawSelect"></select></div></div><div class="btnRow"><button class="btn primary" id="btnLoadScores">Préparer la saisie</button><button class="btn validate" id="btnSaveScoreDay">Enregistrer journée</button></div><div class="hint">Les invités apparaissent dans le classement du jour, mais sont exclus du classement annuel.</div></div>
-        <div class="cardBody"><div class="scoreList" id="scoreEntryList"></div><details><summary>Nearest to the pin <span style="color:var(--muted);font-weight:800">▼</span></summary><div class="sectionBody"><div class="optionsRow"><select id="near1"></select><select id="near2"></select><select id="near3"></select><select id="near4"></select><select id="near5"></select></div><div class="hint">Laisse “aucun” si pas de gagnant sur un par 3.</div></div></details></div>
-      </section>
-      <section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Strokeplay annuel manuel</div><div class="status">1 score par joueur</div></div><div class="hint">Renseigne le score Strokeplay déclaré. Il est ajouté au total annuel avec les 9 meilleurs Stableford.</div></div><div class="cardBody"><div class="scoreList" id="strokeList"></div></div></section>
-    </div>
+    <section class="card">
+      <div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Nouvelle journée / saisie scores</div><div class="status" id="scoreStatus">Prêt</div></div><div class="fields"><div class="field"><label>Date</label><input type="date" id="scoreDate"></div><div class="field"><label>Tirage validé</label><select id="scoreDrawSelect"></select></div></div><div class="btnRow"><button class="btn primary" id="btnLoadScores">Préparer la saisie</button><button class="btn validate" id="btnSaveScoreDay">Enregistrer journée</button></div><div class="hint">Les invités apparaissent dans le classement du jour, mais sont exclus du classement annuel.</div></div>
+      <div class="cardBody"><div class="scoreList" id="scoreEntryList"></div><details><summary>Nearest to the pin <span style="color:var(--muted);font-weight:800">▼</span></summary><div class="sectionBody"><div class="optionsRow"><select id="near1"></select><select id="near2"></select><select id="near3"></select><select id="near4"></select><select id="near5"></select></div><div class="hint">Laisse “aucun” si pas de gagnant sur un par 3.</div></div></details></div>
+    </section>
     <div class="grid3" style="margin-top:14px"><section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement du jour</div><div class="status" id="dayRankStatus">—</div></div></div><div class="cardBody"><div id="dayRanking"></div></div></section><section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement annuel</div><div class="status">Top 9 SF + Stroke</div></div></div><div class="cardBody"><div id="annualRanking"></div></div></section><section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement Nearest</div><div class="status">Annuel</div></div></div><div class="cardBody"><div id="nearestRanking"></div></div></section></div>
     <section class="card" style="margin-top:14px"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Journées enregistrées</div><div class="status" id="scoreDaysStatus">0 journée</div></div><div class="btnRow"><button class="btn ghost" id="btnRefreshScores">Rafraîchir</button><button class="btn danger" id="btnClearScores">Effacer scores</button></div></div><div class="cardBody"><div class="historyList" id="scoreDaysList"></div></div></section>
+    <section class="card" style="margin-top:14px">
+      <div class="cardBody" style="padding:0">
+        <details>
+          <summary>Strokeplay annuel manuel <span style="color:var(--muted);font-weight:800">▼</span></summary>
+          <div class="sectionBody">
+            <div class="hint" style="margin-top:0;margin-bottom:10px">Renseigne le score Strokeplay déclaré. Il est ajouté au total annuel avec les 9 meilleurs Stableford. Section rare, repliée par défaut.</div>
+            <div class="scoreList" id="strokeList"></div>
+          </div>
+        </details>
+      </div>
+    </section>
   </section>
 </div>
 
