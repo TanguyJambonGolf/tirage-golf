@@ -92,7 +92,7 @@
     .placeholder{color:var(--muted);font-size:14px;line-height:1.5}
     .stickyBar{position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:10px 12px 12px;background:linear-gradient(180deg,rgba(246,250,247,0),rgba(246,250,247,.92));backdrop-filter:blur(10px);border-top:1px solid rgba(15,23,42,.08)}
     .stickyInner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.stickyInner .tabBtn{font-size:11px;padding:0 4px;height:42px}
-    @media(min-width:981px){.stickyBar{display:none}.wrap{padding-bottom:22px}}
+    @media(min-width:981px){.wrap{padding-bottom:96px}}
   </style>
 </head>
 
@@ -159,7 +159,7 @@
   </section>
 </div>
 
-<div class="stickyBar"><div class="stickyInner"><button class="btn tabBtn active" data-tab="draw">Tirage</button><button class="btn tabBtn" data-tab="scores">Scores</button><button class="btn tabBtn" data-tab="stats">Stats</button><button class="btn tabBtn" data-tab="history">Historique</button><button class="btn tabBtn" data-tab="players">Joueurs</button></div></div>
+<div class="stickyBar"><div class="stickyInner"><button type="button" class="btn tabBtn active" data-tab="draw">Tirage</button><button type="button" class="btn tabBtn" data-tab="scores">Scores</button><button type="button" class="btn tabBtn" data-tab="stats">Stats</button><button type="button" class="btn tabBtn" data-tab="history">Historique</button><button type="button" class="btn tabBtn" data-tab="players">Joueurs</button></div></div>
 
 <script>
 const DEFAULT_PLAYERS=["RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG","JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"];
@@ -184,7 +184,16 @@ function formatWA(groups,startTimeHHMM){const times=buildTeeTimes(startTimeHHMM,
 const playersGrid=document.getElementById("playersGrid"),guestsGrid=document.getElementById("guestsGrid"),playersAdminGrid=document.getElementById("playersAdminGrid"),guestsAdminGrid=document.getElementById("guestsAdminGrid"),statusEl=document.getElementById("status"),resultEl=document.getElementById("result"),waText=document.getElementById("waText"),startTimeInput=document.getElementById("startTime"),countText=document.getElementById("countText"),countDot=document.getElementById("countDot"),historyList=document.getElementById("historyList"),historyStatus=document.getElementById("historyStatus");
 function savePresence(){saveJSON(STORAGE_KEY,presence)}
 function setStatus(text,kind){statusEl.textContent=text;statusEl.className="status "+(kind||"")}
-function switchTab(tabName){document.querySelectorAll(".tabBtn").forEach(btn=>btn.classList.toggle("active",btn.dataset.tab===tabName));document.querySelectorAll(".tabPanel").forEach(panel=>panel.classList.toggle("active",panel.id===`tab-${tabName}`));if(tabName==="history")renderHistory();if(tabName==="scores")renderScoresModule()}
+function switchTab(tabName){
+  document.querySelectorAll("[data-tab]").forEach(btn=>btn.classList.toggle("active",btn.dataset.tab===tabName));
+  document.querySelectorAll(".tabPanel").forEach(panel=>{
+    const isActive=panel.id===`tab-${tabName}`;
+    panel.classList.toggle("active",isActive);
+    panel.style.display=isActive?"block":"none";
+  });
+  if(tabName==="history")renderHistory();
+  if(tabName==="scores")renderScoresModule();
+}
 function renderPresenceTiles(names,container,prefix){container.innerHTML="";names.forEach(name=>{const key=`${prefix}:${name}`,id=`${prefix}_${name.replace(/\s+/g,"_")}`;const tile=document.createElement("div");tile.className="tile";tile.innerHTML=`<div class="name">${name}</div><label style="display:flex;align-items:center;gap:10px"><input class="cb" type="checkbox" id="${id}" ${presence[key]?"checked":""} /><span class="toggle" aria-hidden="true"></span></label>`;container.appendChild(tile);const cb=tile.querySelector("input");cb.addEventListener("change",()=>{presence[key]=cb.checked;savePresence();updateCount()});tile.addEventListener("click",ev=>{if(ev.target&&(ev.target.tagName==="INPUT"||ev.target.classList.contains("toggle")))return;cb.checked=!cb.checked;presence[key]=cb.checked;savePresence();updateCount()})})}
 function renderAdminTiles(names,container,prefix){container.innerHTML="";names.forEach(name=>{const tile=document.createElement("div");tile.className="tile";tile.innerHTML=`<div class="tileLeft"><div class="name">${name}</div><button class="deleteBtn" data-name="${name}" data-prefix="${prefix}" title="Supprimer">×</button></div>`;container.appendChild(tile);tile.querySelector(".deleteBtn").addEventListener("click",()=>{if(!confirm(`Supprimer ${name} ?`))return;if(prefix==="P"){players=players.filter(x=>x!==name);saveJSON(PLAYERS_KEY,players)}else{guests=guests.filter(x=>x!==name);saveJSON(GUESTS_KEY,guests)}delete presence[`${prefix}:${name}`];savePresence();renderAll();fillForceSelectors();renderScoresModule()})})}
 function getPresentList(){return[...players.filter(p=>presence[`P:${p}`]),...guests.filter(g=>presence[`G:${g}`])]}
@@ -276,7 +285,7 @@ document.getElementById("btnAllPlayers").addEventListener("click",()=>{players.f
 document.getElementById("btnRefreshHistory").addEventListener("click",renderHistory);document.getElementById("btnClearHistory").addEventListener("click",()=>{if(!confirm("Effacer tout l’historique des tirages validés ?"))return;history=[];saveJSON(HISTORY_KEY,history);renderHistory();fillDrawSelect()});historyList.addEventListener("click",ev=>{const btn=ev.target.closest("button[data-action]");if(!btn)return;const item=history.find(x=>x.id===btn.dataset.id);if(!item)return;if(btn.dataset.action==="copy")copyText(item.whatsapp||"");if(btn.dataset.action==="delete"){if(!confirm("Supprimer ce tirage validé de l’historique ?"))return;history=history.filter(x=>x.id!==btn.dataset.id);saveJSON(HISTORY_KEY,history);renderHistory();fillDrawSelect()}});
 document.getElementById("btnLoadScores").addEventListener("click",prepareScoreEntry);document.getElementById("btnSaveScoreDay").addEventListener("click",saveScoreDay);document.getElementById("btnRefreshScores").addEventListener("click",renderScoresModule);document.getElementById("btnClearScores").addEventListener("click",clearScores);document.getElementById("scoreDaysList").addEventListener("click",ev=>{const btn=ev.target.closest("button[data-score-action]");if(!btn)return;if(btn.dataset.scoreAction==="edit")editScoreDay(btn.dataset.id);if(btn.dataset.scoreAction==="delete"){if(!confirm("Supprimer cette journée de scores ?"))return;scoreDays=scoreDays.filter(d=>d.id!==btn.dataset.id);saveJSON(SCORE_DAYS_KEY,scoreDays);renderScoresModule()}});
 function renderAll(){renderPresenceTiles(players,playersGrid,"P");renderPresenceTiles(guests,guestsGrid,"G");renderAdminTiles(players,playersAdminGrid,"P");renderAdminTiles(guests,guestsAdminGrid,"G");updateCount()}
-document.getElementById("scoreDate").value=todayISO();fillForceSelectors();loadStartTime();renderAll();renderHistory();renderScoresModule();setStatus("Prêt","");
+document.getElementById("scoreDate").value=todayISO();fillForceSelectors();loadStartTime();renderAll();renderHistory();renderScoresModule();switchTab("draw");setStatus("Prêt","");
 </script>
 </body>
 </html>
