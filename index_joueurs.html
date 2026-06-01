@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Draw Golf — Classements</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+  <meta name="theme-color" content="#f6faf7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Golf Classements">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <style>
+    :root{
+      --bg:#f6faf7; --surface:#fff; --border:rgba(15,23,42,.12); --text:#0f172a;
+      --muted:rgba(15,23,42,.62); --shadow:0 10px 28px rgba(2,6,23,.08);
+      --radius:16px; --accent:#0ea37a; --accent2:#0b7c5d; --accentSoft:rgba(14,163,122,.12);
+      --danger:#b91c1c; --dangerSoft:#fee2e2; --tap:46px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
+      background:radial-gradient(1200px 600px at 20% -10%,rgba(14,163,122,.12),transparent 55%),
+                 radial-gradient(900px 520px at 110% 0%,rgba(14,163,122,.08),transparent 50%),var(--bg);
+      -webkit-text-size-adjust:100%;
+    }
+    .wrap{max-width:920px;margin:0 auto;padding:18px 14px 34px}
+    header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+    h1{margin:0;font-size:22px;letter-spacing:.2px}
+    .subtitle{margin-top:6px;color:var(--muted);font-size:13px;max-width:70ch}
+    .pill{display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);background:rgba(255,255,255,.7);border-radius:999px;box-shadow:0 6px 18px rgba(2,6,23,.06);font-size:12px;color:var(--muted);white-space:nowrap}
+    .dot{width:10px;height:10px;border-radius:999px;background:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.18)}
+    .dot.ok{background:var(--accent);box-shadow:0 0 0 4px rgba(14,163,122,.18)}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .cardHead{padding:14px 14px 12px;border-bottom:1px solid rgba(15,23,42,.08);background:linear-gradient(180deg,rgba(14,163,122,.06),transparent)}
+    .cardTitleRow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .cardTitle{font-weight:900;letter-spacing:.2px;font-size:15px}
+    .status{font-size:12px;color:var(--muted)}.status.ok{color:var(--accent2);font-weight:800}.status.warn{color:#b45309;font-weight:800}
+    .cardBody{padding:14px}
+    .hero{padding:16px;border:1px solid rgba(14,163,122,.18);background:rgba(14,163,122,.06);border-radius:16px;margin-bottom:14px}
+    .heroTitle{font-weight:950;font-size:18px;margin-bottom:5px;color:var(--accent2)}
+    .heroText{font-size:13px;line-height:1.45;color:var(--muted)}
+    .actions{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0 14px}
+    .btn{height:var(--tap);border-radius:14px;border:1px solid rgba(14,163,122,.25);background:linear-gradient(135deg,rgba(14,163,122,.14),rgba(14,163,122,.06));box-shadow:0 10px 22px rgba(14,163,122,.10);color:var(--accent2);font-weight:900;letter-spacing:.2px;cursor:pointer;font-size:16px}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(15,23,42,.10)}
+    th,td{padding:10px 8px;border-bottom:1px solid rgba(15,23,42,.08);text-align:left;font-size:14px;vertical-align:middle}th{background:rgba(14,163,122,.07);font-weight:950;color:var(--accent2)}
+    td.rank{font-weight:950;color:var(--accent2);width:48px}td.score{font-weight:950;text-align:right}th.score{text-align:right}
+    .placeholder{color:var(--muted);font-size:14px;line-height:1.5;padding:4px 0}
+    .foot{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.45;text-align:center}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;background:var(--accentSoft);border:1px solid rgba(14,163,122,.20);font-size:12px;font-weight:850;color:var(--accent2)}
+    @media(max-width:640px){
+      header{align-items:flex-start;flex-direction:column}.pill{align-self:flex-start}
+      th,td{font-size:13px;padding:9px 7px}.wrap{padding-left:12px;padding-right:12px}
+      .cardTitle{font-size:14px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Draw Golf</h1>
+      <div class="subtitle">Classements en lecture seule — aucune modification possible depuis cette page.</div>
+    </div>
+    <div class="pill"><span class="dot" id="cloudDot"></span><span id="cloudText">Chargement cloud...</span></div>
+  </header>
+
+  <div class="hero">
+    <div class="heroTitle">Classements du groupe</div>
+    <div class="heroText" id="updatedText">Connexion aux données du club en cours.</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="btnRefresh">Actualiser les classements</button>
+  </div>
+
+  <main class="grid">
+    <section class="card">
+      <div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement du jour</div><div class="status" id="dayStatus">—</div></div></div>
+      <div class="cardBody"><div id="dayRanking"><div class="placeholder">Chargement...</div></div></div>
+    </section>
+
+    <section class="card">
+      <div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement annuel</div><div class="status">Top 9 SF + Stroke</div></div></div>
+      <div class="cardBody"><div id="annualRanking"><div class="placeholder">Chargement...</div></div></div>
+    </section>
+
+    <section class="card">
+      <div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement Nearest annuel</div><div class="status">Joueurs officiels</div></div></div>
+      <div class="cardBody"><div id="nearestRanking"><div class="placeholder">Chargement...</div></div></div>
+    </section>
+  </main>
+
+  <div class="foot">Données synchronisées depuis le cloud Draw Golf. Cette page est en consultation uniquement.</div>
+</div>
+
+<script>
+const DEFAULT_PLAYERS=["RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG","JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"];
+const SUPABASE_URL="https://vqcadrtihvlrisdwjfws.supabase.co";
+const SUPABASE_KEY="sb_publishable_DFC8vnsdF1-p3kDggiUhwA_jTs1Rt9-";
+const CLOUD_TABLE="draw_golf_data";
+const CLOUD_ROW_ID="default";
+
+let players=DEFAULT_PLAYERS.slice();
+let scoreDays=[];
+let strokeScores={};
+let cloudUpdatedAt="";
+
+function setCloudStatus(text,kind){
+  const cloudText=document.getElementById("cloudText");
+  const cloudDot=document.getElementById("cloudDot");
+  cloudText.textContent=text;
+  cloudDot.className="dot"+(kind==="ok"?" ok":"");
+}
+function cloudHeaders(extra={}){
+  return Object.assign({"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},extra);
+}
+function formatDateFr(dateStr){
+  if(!dateStr)return "—";
+  const d=new Date(dateStr+"T12:00:00");
+  if(Number.isNaN(d.getTime()))return dateStr;
+  return d.toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"});
+}
+function formatDateTimeFr(iso){
+  if(!iso)return "";
+  const d=new Date(iso);
+  if(Number.isNaN(d.getTime()))return "";
+  return d.toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"});
+}
+function safeNumber(v){
+  const n=Number(v);
+  return Number.isFinite(n)?n:0;
+}
+function tableHTML(headers,rows,scoreIndex){
+  if(!rows.length)return '<div class="placeholder">Aucune donnée disponible.</div>';
+  return `<table><thead><tr>${headers.map((h,i)=>`<th class="${i===scoreIndex?'score':''}">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i===0?'rank':i===scoreIndex?'score':''}">${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+function getLatestScoreDay(){
+  if(!Array.isArray(scoreDays)||!scoreDays.length)return null;
+  return scoreDays.slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")))[0];
+}
+function renderDayRanking(){
+  const target=document.getElementById("dayRanking");
+  const status=document.getElementById("dayStatus");
+  const day=getLatestScoreDay();
+  if(!day){
+    status.textContent="—";
+    target.innerHTML='<div class="placeholder">Aucune journée enregistrée.</div>';
+    return;
+  }
+  const rows=(day.scores||[]).slice().sort((a,b)=>safeNumber(b.stableford)-safeNumber(a.stableford)).map((s,i)=>[
+    i+1,
+    `${s.player||"—"}${s.guest?" (invité)":""}`,
+    safeNumber(s.stableford)
+  ]);
+  status.textContent=formatDateFr(day.date);
+  target.innerHTML=tableHTML(["#","Joueur","SF"],rows,2);
+}
+function annualData(){
+  const byPlayer={};
+  players.forEach(p=>byPlayer[p]=[]);
+  scoreDays.forEach(day=>(day.scores||[]).forEach(s=>{
+    if(!s.guest&&byPlayer[s.player])byPlayer[s.player].push({date:day.date,score:safeNumber(s.stableford)});
+  }));
+  return players.map(p=>{
+    const stable=byPlayer[p].slice().sort((a,b)=>b.score-a.score).slice(0,9);
+    const stableTotal=stable.reduce((sum,x)=>sum+x.score,0);
+    const stroke=safeNumber(strokeScores[p]);
+    return{player:p,stableCount:stable.length,stableTotal,stroke,total:stableTotal+stroke};
+  }).sort((a,b)=>b.total-a.total || b.stableTotal-a.stableTotal || a.player.localeCompare(b.player));
+}
+function renderAnnualRanking(){
+  const data=annualData().filter(r=>r.total>0||r.stableCount>0||r.stroke>0);
+  const rows=data.map((r,i)=>[i+1,r.player,`${r.stableTotal} (${r.stableCount})`,r.stroke||"—",r.total]);
+  document.getElementById("annualRanking").innerHTML=tableHTML(["#","Joueur","Top 9 SF","Stroke","Total"],rows,4);
+}
+function renderNearestRanking(){
+  const counts={};
+  players.forEach(p=>counts[p]=0);
+  scoreDays.forEach(day=>(day.nearest||[]).forEach(p=>{if(counts[p]!==undefined)counts[p]+=1;}));
+  const rows=Object.entries(counts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0])).map((r,i)=>[i+1,r[0],r[1]]);
+  document.getElementById("nearestRanking").innerHTML=tableHTML(["#","Joueur","Nearest"],rows,2);
+}
+function renderAll(){
+  renderDayRanking();
+  renderAnnualRanking();
+  renderNearestRanking();
+  const lastDay=getLatestScoreDay();
+  const updatedText=document.getElementById("updatedText");
+  const cloudText=cloudUpdatedAt?`Dernière synchro cloud : ${formatDateTimeFr(cloudUpdatedAt)}.`:"Données chargées depuis le cloud.";
+  updatedText.innerHTML=`<span class="badge">Lecture seule</span><div style="height:8px"></div>${lastDay?`Dernière partie affichée : ${formatDateFr(lastDay.date)}.`:"Aucune partie enregistrée pour le moment."} ${cloudText}`;
+}
+function applyCloudData(data,updatedAt){
+  if(!data||typeof data!=="object")throw new Error("Données cloud invalides");
+  players=Array.isArray(data.players)&&data.players.length?data.players.slice():DEFAULT_PLAYERS.slice();
+  scoreDays=Array.isArray(data.scoreDays)?data.scoreDays.slice():[];
+  strokeScores=data.strokeScores&&typeof data.strokeScores==="object"?Object.assign({},data.strokeScores):{};
+  cloudUpdatedAt=updatedAt||data.updatedAt||"";
+  renderAll();
+}
+async function cloudLoad(){
+  setCloudStatus("Chargement cloud...","warn");
+  try{
+    const url=`${SUPABASE_URL}/rest/v1/${CLOUD_TABLE}?id=eq.${encodeURIComponent(CLOUD_ROW_ID)}&select=data,updated_at`;
+    const res=await fetch(url,{headers:cloudHeaders({"Accept":"application/json"})});
+    if(!res.ok)throw new Error("Cloud indisponible");
+    const rows=await res.json();
+    if(!rows||!rows.length||!rows[0].data)throw new Error("Cloud vide");
+    applyCloudData(rows[0].data,rows[0].updated_at);
+    setCloudStatus("Cloud chargé","ok");
+  }catch(e){
+    setCloudStatus("Cloud indisponible","warn");
+    document.getElementById("updatedText").textContent="Impossible de charger les classements. Réessaie dans quelques instants.";
+    document.getElementById("dayRanking").innerHTML='<div class="placeholder">Classement indisponible.</div>';
+    document.getElementById("annualRanking").innerHTML='<div class="placeholder">Classement indisponible.</div>';
+    document.getElementById("nearestRanking").innerHTML='<div class="placeholder">Classement indisponible.</div>';
+  }
+}
+
+document.getElementById("btnRefresh").addEventListener("click",cloudLoad);
+cloudLoad();
+</script>
+</body>
+</html>
