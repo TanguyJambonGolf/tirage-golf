@@ -2,404 +2,71 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Draw Golf — Classements</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Draw Golf Joueurs</title>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-
   <meta name="theme-color" content="#f6faf7">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Golf Classements">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
   <style>
-    :root{
-      --bg:#f6faf7; --surface:#fff; --border:rgba(15,23,42,.12); --text:#0f172a;
-      --muted:rgba(15,23,42,.62); --shadow:0 10px 28px rgba(2,6,23,.08);
-      --radius:16px; --accent:#0ea37a; --accent2:#0b7c5d; --accentSoft:rgba(14,163,122,.12);
-      --danger:#b91c1c; --dangerSoft:#fee2e2; --tap:46px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
-      background:radial-gradient(1200px 600px at 20% -10%,rgba(14,163,122,.12),transparent 55%),
-                 radial-gradient(900px 520px at 110% 0%,rgba(14,163,122,.08),transparent 50%),var(--bg);
-      -webkit-text-size-adjust:100%;
-    }
-    .wrap{max-width:920px;margin:0 auto;padding:18px 14px 34px}
-    header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
-    h1{margin:0;font-size:22px;letter-spacing:.2px}
-    .subtitle{margin-top:6px;color:var(--muted);font-size:13px;max-width:70ch}
-    .pill{display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);background:rgba(255,255,255,.7);border-radius:999px;box-shadow:0 6px 18px rgba(2,6,23,.06);font-size:12px;color:var(--muted);white-space:nowrap}
-    .dot{width:10px;height:10px;border-radius:999px;background:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.18)}
-    .dot.ok{background:var(--accent);box-shadow:0 0 0 4px rgba(14,163,122,.18)}
-    .grid{display:grid;grid-template-columns:1fr;gap:14px}
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-    .accordionCard{display:block}
-    .accordionBtn{width:100%;border:0;text-align:left;font:inherit;color:inherit;cursor:pointer;background:transparent;padding:0}
-    .accordionBtn .cardHead{transition:background .15s ease}
-    .accordionBtn[aria-expanded="false"] .cardHead{border-bottom:none!important}
-    .accordionBtn[aria-expanded="true"] .cardHead{border-bottom:1px solid rgba(15,23,42,.08)}
-    .chevron{font-weight:950;color:var(--muted);font-size:18px;line-height:1;transition:transform .16s ease}
-    .accordionBtn[aria-expanded="true"] .chevron{transform:rotate(180deg)}
-    .accordionBody{display:none}
-
-    .cardHead{padding:14px 14px 12px;border-bottom:1px solid rgba(15,23,42,.08);background:linear-gradient(180deg,rgba(14,163,122,.06),transparent)}
-    .cardTitleRow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .cardTitle{font-weight:900;letter-spacing:.2px;font-size:15px}
-    .status{font-size:12px;color:var(--muted)}.status.ok{color:var(--accent2);font-weight:800}.status.warn{color:#b45309;font-weight:800}
-    .cardBody{padding:14px}
-    .hero{padding:16px;border:1px solid rgba(14,163,122,.18);background:rgba(14,163,122,.06);border-radius:16px;margin-bottom:14px}
-    .heroTitle{font-weight:950;font-size:18px;margin-bottom:5px;color:var(--accent2)}
-    .heroText{font-size:13px;line-height:1.45;color:var(--muted)}
-    .actions{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0 14px}
-    .btn{height:var(--tap);border-radius:14px;border:1px solid rgba(14,163,122,.25);background:linear-gradient(135deg,rgba(14,163,122,.14),rgba(14,163,122,.06));box-shadow:0 10px 22px rgba(14,163,122,.10);color:var(--accent2);font-weight:900;letter-spacing:.2px;cursor:pointer;font-size:16px}
-    table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(15,23,42,.10)}
-    th,td{padding:10px 8px;border-bottom:1px solid rgba(15,23,42,.08);text-align:left;font-size:14px;vertical-align:middle}th{background:rgba(14,163,122,.07);font-weight:950;color:var(--accent2)}
-    td.rank{font-weight:950;color:var(--accent2);width:48px}td.score{font-weight:950;text-align:right}th.score{text-align:right}
-    .placeholder{color:var(--muted);font-size:14px;line-height:1.5;padding:4px 0}
-    .drawText{white-space:pre-wrap;font-size:14px;line-height:1.55;background:rgba(14,163,122,.04);border:1px solid rgba(14,163,122,.12);border-radius:14px;padding:12px;font-weight:750}
-    .foot{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.45;text-align:center}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;background:var(--accentSoft);border:1px solid rgba(14,163,122,.20);font-size:12px;font-weight:850;color:var(--accent2)}
-    .playerLink{border:0;background:transparent;padding:0;color:var(--accent2);font:inherit;font-weight:950;text-decoration:underline;cursor:pointer}
-    .statsGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
-    .statBox{border:1px solid rgba(15,23,42,.10);border-radius:14px;background:rgba(14,163,122,.04);padding:12px}
-    .statNum{font-size:22px;font-weight:950;color:var(--accent2)}
-    .statLabel{font-size:12px;color:var(--muted);font-weight:800;margin-top:3px}
-    @media(max-width:640px){.statsGrid{grid-template-columns:1fr}}
-    @media(max-width:640px){
-      header{align-items:flex-start;flex-direction:column}.pill{align-self:flex-start}
-      th,td{font-size:13px;padding:9px 7px}.wrap{padding-left:12px;padding-right:12px}
-      .cardTitle{font-size:14px}
-    }
+    :root{--bg:#f6faf7;--surface:#fff;--border:rgba(15,23,42,.12);--text:#0f172a;--muted:rgba(15,23,42,.62);--shadow:0 10px 28px rgba(2,6,23,.08);--radius:16px;--accent:#0ea37a;--accent2:#0b7c5d;--accentSoft:rgba(14,163,122,.12);--tap:46px}
+    *{box-sizing:border-box}body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:radial-gradient(1200px 600px at 20% -10%,rgba(14,163,122,.12),transparent 55%),radial-gradient(900px 520px at 110% 0%,rgba(14,163,122,.08),transparent 50%),var(--bg)}
+    .wrap{max-width:980px;margin:0 auto;padding:18px 14px 34px}header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}h1{margin:0;font-size:24px;letter-spacing:.2px}.subtitle{margin-top:6px;color:var(--muted);font-size:13px}.pill{display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);background:rgba(255,255,255,.7);border-radius:999px;box-shadow:0 6px 18px rgba(2,6,23,.06);font-size:12px;color:var(--muted);white-space:nowrap}.dot{width:10px;height:10px;border-radius:999px;background:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.18)}.dot.ok{background:var(--accent);box-shadow:0 0 0 4px rgba(14,163,122,.18)}
+    .hero{background:linear-gradient(135deg,rgba(14,163,122,.16),rgba(255,255,255,.75));border:1px solid rgba(14,163,122,.18);border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}.heroTitle{font-weight:950;font-size:18px;color:var(--accent2)}.heroSub{color:var(--muted);font-size:13px;margin-top:5px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:820px){.grid2{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}.cardHead{padding:14px;border-bottom:1px solid rgba(15,23,42,.08);background:linear-gradient(180deg,rgba(14,163,122,.06),transparent)}.cardTitleRow{display:flex;align-items:center;justify-content:space-between;gap:10px}.cardTitle{font-weight:900;letter-spacing:.2px;font-size:15px}.status{font-size:12px;color:var(--muted)}.status.ok{color:var(--accent2);font-weight:800}.cardBody{padding:14px;overflow-x:auto}.btn{height:var(--tap);border-radius:14px;border:1px solid var(--border);background:#fff;color:var(--text);font-weight:800;cursor:pointer}.btn.primary{border-color:rgba(14,163,122,.35);background:linear-gradient(135deg,rgba(14,163,122,.14),rgba(14,163,122,.06));box-shadow:0 10px 22px rgba(14,163,122,.12)}
+    .resultList,.historyList{display:grid;gap:10px}.resultItem{display:flex;gap:12px;align-items:center;border:1px solid rgba(15,23,42,.10);background:rgba(14,163,122,.05);border-radius:14px;padding:10px 12px;flex-wrap:wrap}.timeBadge{min-width:72px;text-align:center;border-radius:12px;padding:8px 10px;background:var(--accentSoft);border:1px solid rgba(14,163,122,.22);color:var(--accent2);font-weight:950;letter-spacing:.3px}.playersLine{font-weight:850;font-size:13px;color:var(--text);margin-top:2px}.placeholder{color:var(--muted);font-size:14px;line-height:1.5}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(15,23,42,.10)}th,td{padding:9px 8px;border-bottom:1px solid rgba(15,23,42,.08);text-align:left;font-size:13px}th{background:rgba(14,163,122,.07);font-weight:900;color:var(--accent2)}.playerLink{border:none;background:transparent;padding:0;color:var(--accent2);font-weight:900;text-decoration:underline;cursor:pointer;font:inherit}.hint{margin-top:8px;font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div>
-      <h1>Draw Golf</h1>
-      <div class="subtitle">Application joueurs — lecture seule cloud.</div>
-    </div>
-    <div class="pill"><span class="dot" id="cloudDot"></span><span id="cloudText">Chargement cloud...</span></div>
+    <div><h1>Draw Golf</h1><div class="subtitle">Application joueurs · lecture seule</div></div>
+    <div class="pill"><span class="dot" id="cloudDot"></span><span id="cloudStatus">Chargement cloud...</span></div>
   </header>
+  <div class="hero"><div class="heroTitle">Classements et draw</div><div class="heroSub">Lecture seule : les informations viennent du cloud Draw Golf.</div></div>
 
-  <div class="hero">
-    <div class="heroTitle">Classements du groupe</div>
-    <div class="heroText" id="updatedText">Connexion aux données du club en cours.</div>
+  <section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Draw publié</div><div class="status" id="drawStatus">—</div></div></div><div class="cardBody"><div class="resultList" id="publicDraw"></div></div></section>
+
+  <div class="grid2">
+    <section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement du jour</div><div class="status" id="dayStatus">—</div></div></div><div class="cardBody"><div id="publicDayRanking"></div></div></section>
+    <section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Nearest du jour</div><div class="status" id="dayNearestStatus">—</div></div></div><div class="cardBody"><div id="publicDayNearest"></div></div></section>
   </div>
 
-  <div class="actions">
-    <button class="btn" id="btnRefresh">Actualiser les classements</button>
-  </div>
-
-  <main class="grid">
-    <section class="card accordionCard" id="sectionDraw">
-      <button class="accordionBtn" type="button" aria-expanded="false" aria-controls="bodyDraw">
-        <div class="cardHead"><div class="cardTitleRow"><div><div class="cardTitle">Dernier draw</div><div class="status" id="drawStatus">—</div></div><div class="chevron">⌄</div></div></div>
-      </button>
-      <div class="cardBody accordionBody" id="bodyDraw" style="display:none;" aria-hidden="true"><div id="drawDisplay"><div class="placeholder">Chargement...</div></div></div>
-    </section>
-
-    <section class="card accordionCard" id="sectionDayRanking">
-      <button class="accordionBtn" type="button" aria-expanded="false" aria-controls="bodyDayRanking">
-        <div class="cardHead"><div class="cardTitleRow"><div><div class="cardTitle">Classement du jour</div><div class="status" id="dayStatus">—</div></div><div class="chevron">⌄</div></div></div>
-      </button>
-      <div class="cardBody accordionBody" id="bodyDayRanking" style="display:none;" aria-hidden="true"><div id="dayRanking"><div class="placeholder">Chargement...</div></div></div>
-    </section>
-
-    <section class="card accordionCard" id="sectionAnnualRanking">
-      <button class="accordionBtn" type="button" aria-expanded="false" aria-controls="bodyAnnualRanking">
-        <div class="cardHead"><div class="cardTitleRow"><div><div class="cardTitle">Classement annuel</div><div class="status">Top 9 SF + Stroke</div></div><div class="chevron">⌄</div></div></div>
-      </button>
-      <div class="cardBody accordionBody" id="bodyAnnualRanking" style="display:none;" aria-hidden="true"><div id="annualRanking"><div class="placeholder">Chargement...</div></div></div>
-    </section>
-
-    <section class="card accordionCard" id="sectionNearestRanking">
-      <button class="accordionBtn" type="button" aria-expanded="false" aria-controls="bodyNearestRanking">
-        <div class="cardHead"><div class="cardTitleRow"><div><div class="cardTitle">Classement Nearest annuel</div><div class="status">Joueurs officiels</div></div><div class="chevron">⌄</div></div></div>
-      </button>
-      <div class="cardBody accordionBody" id="bodyNearestRanking" style="display:none;" aria-hidden="true"><div id="nearestRanking"><div class="placeholder">Chargement...</div></div></div>
-    </section>
-
-    <section class="card accordionCard" id="sectionStatsPresence">
-      <button class="accordionBtn" type="button" aria-expanded="false" aria-controls="bodyStatsPresence">
-        <div class="cardHead"><div class="cardTitleRow"><div><div class="cardTitle">Stats présence</div><div class="status" id="statsPresenceStatus">—</div></div><div class="chevron">⌄</div></div></div>
-      </button>
-      <div class="cardBody accordionBody" id="bodyStatsPresence" style="display:none;" aria-hidden="true">
-        <div id="statsSummary"><div class="placeholder">Chargement...</div></div>
-        <div style="font-weight:950;margin:12px 0 8px">Joueurs officiels</div>
-        <div id="statsOfficialPresence"><div class="placeholder">Chargement...</div></div>
-        <div style="font-weight:950;margin:12px 0 8px">Invités</div>
-        <div id="statsGuestPresence"><div class="placeholder">Chargement...</div></div>
-      </div>
-    </section>
-  </main>
-
-  <div class="foot">Données synchronisées depuis le cloud Draw Golf. Cette page est en consultation uniquement.</div>
+  <section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement annuel</div><div class="status">Top 9 SF + Stroke</div></div></div><div class="cardBody"><div id="publicAnnualRanking"></div><div class="hint">Clique sur un joueur pour voir le détail de ses 9 meilleurs scores.</div></div></section>
+  <section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Classement Nearest annuel</div><div class="status">Annuel</div></div></div><div class="cardBody"><div id="publicNearestRanking"></div></div></section>
+  <section class="card"><div class="cardHead"><div class="cardTitleRow"><div class="cardTitle">Stats présence</div><div class="status" id="statsStatus">—</div></div></div><div class="cardBody"><div class="grid2"><div><div class="cardTitle" style="margin-bottom:8px">Joueurs officiels</div><div id="publicOfficialPresence"></div></div><div><div class="cardTitle" style="margin-bottom:8px">Invités</div><div id="publicGuestPresence"></div></div></div></div></section>
+  <button class="btn primary" id="btnRefresh" style="width:100%">Actualiser les classements</button>
 </div>
-
 <script>
 const DEFAULT_PLAYERS=["RG","AT","GDG","GG","PZ","BD","NH","TLT","JD","CG","JMP","JPG","AP","TM","HDS","AC","TB","SL","TBU","JLH"];
 const DEFAULT_GUESTS=["INV1","INV2","INV3","INV4"];
 const SUPABASE_URL="https://vqcadrtihvlrisdwjfws.supabase.co";
 const SUPABASE_KEY="sb_publishable_DFC8vnsdF1-p3kDggiUhwA_jTs1Rt9-";
-const CLOUD_TABLE="draw_golf_data";
-const CLOUD_ROW_ID="default";
-
-let players=DEFAULT_PLAYERS.slice();
-let guests=DEFAULT_GUESTS.slice();
-let scoreDays=[];
-let strokeScores={};
-let history=[];
-let cloudUpdatedAt="";
-
-function setCloudStatus(text,kind){
-  const cloudText=document.getElementById("cloudText");
-  const cloudDot=document.getElementById("cloudDot");
-  cloudText.textContent=text;
-  cloudDot.className="dot"+(kind==="ok"?" ok":"");
-}
-function cloudHeaders(extra={}){
-  return Object.assign({"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},extra);
-}
-function formatDateFr(dateStr){
-  if(!dateStr)return "—";
-  const d=new Date(dateStr+"T12:00:00");
-  if(Number.isNaN(d.getTime()))return dateStr;
-  return d.toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"});
-}
-function formatDateTimeFr(iso){
-  if(!iso)return "";
-  const d=new Date(iso);
-  if(Number.isNaN(d.getTime()))return "";
-  return d.toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"});
-}
-function safeNumber(v){
-  const n=Number(v);
-  return Number.isFinite(n)?n:0;
-}
-function normalizeName(v){return String(v||"").trim().toUpperCase();}
-function formatDateShort(dateStr){
-  if(!dateStr)return "—";
-  const d=new Date(dateStr+"T12:00:00");
-  if(Number.isNaN(d.getTime()))return dateStr;
-  return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});
-}
-function tableHTML(headers,rows,scoreIndex){
-  if(!rows.length)return '<div class="placeholder">Aucune donnée disponible.</div>';
-  return `<table><thead><tr>${headers.map((h,i)=>`<th class="${i===scoreIndex?'score':''}">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i===0?'rank':i===scoreIndex?'score':''}">${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-}
-function getLatestScoreDay(){
-  if(!Array.isArray(scoreDays)||!scoreDays.length)return null;
-  return scoreDays.slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")))[0];
-}
-function escapeHTML(value){
-  return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
-}
-function getLatestDraw(){
-  if(!Array.isArray(history)||!history.length)return null;
-  return history.slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")))[0];
-}
-function renderLatestDraw(){
-  const target=document.getElementById("drawDisplay");
-  const status=document.getElementById("drawStatus");
-  const draw=getLatestDraw();
-  if(!draw){
-    status.textContent="—";
-    target.innerHTML='<div class="placeholder">Aucun draw validé disponible.</div>';
-    return;
-  }
-  const meta=[];
-  if(draw.startTime)meta.push(`1er départ ${draw.startTime}`);
-  if(Array.isArray(draw.presentList))meta.push(`${draw.presentList.length} présents`);
-  if(Array.isArray(draw.groups))meta.push(`${draw.groups.length} flights`);
-  status.textContent=formatDateTimeFr(draw.createdAt)||"Dernier tirage";
-  const text=draw.whatsapp||((draw.groups||[]).map((g,i)=>`Flight ${i+1} : ${Array.isArray(g)?g.join(" / "):""}`).join("\n"));
-  target.innerHTML=`${meta.length?`<div class="placeholder" style="padding-bottom:8px">${escapeHTML(meta.join(" · "))}</div>`:""}<div class="drawText">${escapeHTML(text||"Draw indisponible.")}</div>`;
-}
-function renderDayRanking(){
-  const target=document.getElementById("dayRanking");
-  const status=document.getElementById("dayStatus");
-  const day=getLatestScoreDay();
-  if(!day){
-    status.textContent="—";
-    target.innerHTML='<div class="placeholder">Aucune journée enregistrée.</div>';
-    return;
-  }
-  const rows=(day.scores||[]).slice().sort((a,b)=>safeNumber(b.stableford)-safeNumber(a.stableford)).map((s,i)=>[
-    i+1,
-    `${s.player||"—"}${s.guest?" (invité)":""}`,
-    safeNumber(s.stableford)
-  ]);
-  status.textContent=formatDateFr(day.date);
-  target.innerHTML=tableHTML(["#","Joueur","SF"],rows,2);
-}
-function annualData(){
-  const byPlayer={};
-  players.forEach(p=>byPlayer[p]=[]);
-  scoreDays.forEach(day=>(day.scores||[]).forEach(s=>{
-    const player=normalizeName(s.player);
-    if(!s.guest&&byPlayer[player])byPlayer[player].push({date:day.date,score:safeNumber(s.stableford)});
-  }));
-  return players.map(p=>{
-    const stable=byPlayer[p].slice().sort((a,b)=>b.score-a.score || String(b.date||"").localeCompare(String(a.date||""))).slice(0,9);
-    const stableTotal=stable.reduce((sum,x)=>sum+x.score,0);
-    const stroke=safeNumber(strokeScores[p]);
-    return{player:p,stable,stableCount:stable.length,stableTotal,stroke,total:stableTotal+stroke};
-  }).sort((a,b)=>b.total-a.total || b.stableTotal-a.stableTotal || a.player.localeCompare(b.player));
-}
-function showAnnualDetail(player){
-  const row=annualData().find(r=>r.player===player);
-  if(!row)return;
-  const lines=[];
-  lines.push(`${player} — détail annuel`);
-  lines.push("");
-  if(row.stable.length){
-    row.stable.forEach((s,i)=>lines.push(`${i+1}. ${s.score} pts — ${formatDateShort(s.date)}`));
-    lines.push("");
-    if(row.stable.length>=9){
-      const scoreToBeat=row.stable[row.stable.length-1].score;
-      lines.push(`Score à battre pour améliorer le total : plus de ${scoreToBeat} pts.`);
-    }else{
-      lines.push(`Encore ${9-row.stable.length} score(s) comptent automatiquement avant d’avoir un Top 9 complet.`);
-    }
-  }else{
-    lines.push("Aucun score Stableford enregistré.");
-  }
-  if(row.stroke)lines.push(`Strokeplay manuel : ${row.stroke}`);
-  alert(lines.join("\n"));
-}
-function renderAnnualRanking(){
-  const data=annualData().filter(r=>r.total>0||r.stableCount>0||r.stroke>0);
-  const rows=data.map((r,i)=>[i+1,`<button class="playerLink" data-annual-player="${escapeHTML(r.player)}">${escapeHTML(r.player)}</button>`,`${r.stableTotal} (${r.stableCount})`,r.stroke||"—",r.total]);
-  document.getElementById("annualRanking").innerHTML=tableHTML(["#","Joueur","Top 9 SF","Stroke","Total"],rows,4);
-}
-function renderNearestRanking(){
-  const counts={};
-  players.forEach(p=>counts[p]=0);
-  scoreDays.forEach(day=>(day.nearest||[]).forEach(p=>{if(counts[p]!==undefined)counts[p]+=1;}));
-  const rows=Object.entries(counts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0])).map((r,i)=>[i+1,r[0],r[1]]);
-  document.getElementById("nearestRanking").innerHTML=tableHTML(["#","Joueur","Nearest"],rows,2);
-}
-
-function buildPresenceStatsFromScores(){
-  const totalDays=scoreDays.length;
-  const map={};
-  function ensure(name,isGuest){
-    const key=normalizeName(name);
-    if(!key)return null;
-    if(!map[key])map[key]={player:key,count:0,lastDate:"",guest:!!isGuest};
-    if(isGuest&&!players.includes(key))map[key].guest=true;
-    return map[key];
-  }
-  players.forEach(p=>ensure(p,false));
-  guests.forEach(g=>ensure(g,true));
-  scoreDays.forEach(day=>{
-    const seen=new Set();
-    (day.scores||[]).forEach(s=>{
-      const key=normalizeName(s.player);
-      if(!key||seen.has(key))return;
-      seen.add(key);
-      const isGuest=!!s.guest||!players.includes(key);
-      const row=ensure(key,isGuest);
-      row.count+=1;
-      if(!row.lastDate||String(day.date)>String(row.lastDate))row.lastDate=day.date;
-    });
-  });
-  const all=Object.values(map).map(r=>Object.assign({},r,{rate:totalDays?Math.round((r.count/totalDays)*100):0}));
-  return{
-    totalDays,
-    all,
-    official:all.filter(r=>players.includes(r.player)&&r.count>0).sort((a,b)=>b.count-a.count||a.player.localeCompare(b.player)),
-    guests:all.filter(r=>!players.includes(r.player)&&r.count>0).sort((a,b)=>b.count-a.count||a.player.localeCompare(b.player))
-  };
-}
-function renderStatsPresence(){
-  const stats=buildPresenceStatsFromScores();
-  const status=document.getElementById("statsPresenceStatus");
-  if(status)status.textContent=`${stats.totalDays} partie${stats.totalDays>1?"s":""}`;
-  const totalPresences=stats.all.reduce((sum,r)=>sum+r.count,0);
-  const avg=stats.totalDays?(totalPresences/stats.totalDays).toFixed(1):"0";
-  const summary=document.getElementById("statsSummary");
-  if(summary)summary.innerHTML=stats.totalDays?`<div class="statsGrid"><div class="statBox"><div class="statNum">${stats.totalDays}</div><div class="statLabel">Parties enregistrées</div></div><div class="statBox"><div class="statNum">${totalPresences}</div><div class="statLabel">Présences totales</div></div><div class="statBox"><div class="statNum">${avg}</div><div class="statLabel">Joueurs / partie</div></div></div>`:`<div class="placeholder">Aucune journée de scores enregistrée.</div>`;
-  const official=document.getElementById("statsOfficialPresence");
-  if(official)official.innerHTML=stats.official.length?tableHTML(["#","Joueur","Présences","%","Dernière"],stats.official.map((r,i)=>[i+1,r.player,r.count,r.rate+"%",formatDateShort(r.lastDate)]),2):`<div class="placeholder">Aucune présence officielle enregistrée.</div>`;
-  const guest=document.getElementById("statsGuestPresence");
-  if(guest)guest.innerHTML=stats.guests.length?tableHTML(["#","Invité","Présences","%","Dernière"],stats.guests.map((r,i)=>[i+1,r.player,r.count,r.rate+"%",formatDateShort(r.lastDate)]),2):`<div class="placeholder">Aucun invité enregistré dans les scores.</div>`;
-}
-
-function setAccordionOpen(btn,open){
-  const body=document.getElementById(btn.getAttribute("aria-controls"));
-  btn.setAttribute("aria-expanded",open?"true":"false");
-  if(body){
-    body.style.display=open?"block":"none";
-    body.setAttribute("aria-hidden",open?"false":"true");
-  }
-}
-function forceCollapsePlayerSections(){
-  document.querySelectorAll(".accordionBtn").forEach(btn=>setAccordionOpen(btn,false));
-}
-function setupAccordions(){
-  document.querySelectorAll(".accordionBtn").forEach(btn=>{
-    setAccordionOpen(btn,false);
-    btn.onclick=function(ev){
-      ev.preventDefault();
-      setAccordionOpen(btn,btn.getAttribute("aria-expanded")!=="true");
-    };
-  });
-}
-
-function renderAll(){
-  renderLatestDraw();
-  renderDayRanking();
-  renderAnnualRanking();
-  renderNearestRanking();
-  renderStatsPresence();
-  const lastDay=getLatestScoreDay();
-  const updatedText=document.getElementById("updatedText");
-  const cloudText=cloudUpdatedAt?`Dernière synchro cloud : ${formatDateTimeFr(cloudUpdatedAt)}.`:"Données chargées depuis le cloud.";
-  updatedText.innerHTML=`<span class="badge">Lecture seule</span><div style="height:8px"></div>${lastDay?`Dernière partie affichée : ${formatDateFr(lastDay.date)}.`:"Aucune partie enregistrée pour le moment."} ${cloudText}`;
-}
-function applyCloudData(data,updatedAt){
-  if(!data||typeof data!=="object")throw new Error("Données cloud invalides");
-  players=Array.isArray(data.players)&&data.players.length?data.players.slice():DEFAULT_PLAYERS.slice();
-  guests=Array.isArray(data.guests)&&data.guests.length?data.guests.slice():DEFAULT_GUESTS.slice();
-  scoreDays=Array.isArray(data.scoreDays)?data.scoreDays.slice():[];
-  history=Array.isArray(data.history)?data.history.slice():[];
-  strokeScores=data.strokeScores&&typeof data.strokeScores==="object"?Object.assign({},data.strokeScores):{};
-  cloudUpdatedAt=updatedAt||data.updatedAt||"";
-  renderAll();
-  forceCollapsePlayerSections();
-}
-async function cloudLoad(){
-  setCloudStatus("Chargement cloud...","warn");
-  try{
-    const url=`${SUPABASE_URL}/rest/v1/${CLOUD_TABLE}?id=eq.${encodeURIComponent(CLOUD_ROW_ID)}&select=data,updated_at`;
-    const res=await fetch(url,{headers:cloudHeaders({"Accept":"application/json"})});
-    if(!res.ok)throw new Error("Cloud indisponible");
-    const rows=await res.json();
-    if(!rows||!rows.length||!rows[0].data)throw new Error("Cloud vide");
-    applyCloudData(rows[0].data,rows[0].updated_at);
-    setCloudStatus("Cloud chargé","ok");
-  }catch(e){
-    setCloudStatus("Cloud indisponible","warn");
-    document.getElementById("updatedText").textContent="Impossible de charger les classements. Réessaie dans quelques instants.";
-    document.getElementById("drawDisplay").innerHTML='<div class="placeholder">Draw indisponible.</div>';
-    document.getElementById("dayRanking").innerHTML='<div class="placeholder">Classement indisponible.</div>';
-    document.getElementById("annualRanking").innerHTML='<div class="placeholder">Classement indisponible.</div>';
-    document.getElementById("nearestRanking").innerHTML='<div class="placeholder">Classement indisponible.</div>';
-    forceCollapsePlayerSections();
-  }
-}
-
-document.getElementById("btnRefresh").addEventListener("click",cloudLoad);
-document.getElementById("annualRanking").addEventListener("click",ev=>{const btn=ev.target.closest("[data-annual-player]");if(btn)showAnnualDetail(btn.dataset.annualPlayer);});
-setupAccordions();
-forceCollapsePlayerSections();
-cloudLoad();
+const CLOUD_TABLE="draw_golf_data",CLOUD_ROW_ID="main";
+let players=DEFAULT_PLAYERS.slice(),guests=DEFAULT_GUESTS.slice(),history=[],scoreDays=[],strokeScores={},publishedDraw=null;
+function headers(){return {"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Accept":"application/json"}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function tableHTML(headers,rows){return`<table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`}
+function normalizeName(v){return(v||"").toString().trim().toUpperCase()}
+function formatDateShort(v){if(!v)return"—";try{return new Date(v+"T12:00:00").toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"})}catch{return v}}
+function setCloud(text,ok){document.getElementById("cloudStatus").textContent=text;document.getElementById("cloudDot").className="dot"+(ok?" ok":"")}
+function applyData(data){players=Array.isArray(data.players)&&data.players.length?data.players:DEFAULT_PLAYERS.slice();guests=Array.isArray(data.guests)&&data.guests.length?data.guests:DEFAULT_GUESTS.slice();history=Array.isArray(data.history)?data.history:[];scoreDays=Array.isArray(data.scoreDays)?data.scoreDays:[];strokeScores=data.strokeScores&&typeof data.strokeScores==="object"?data.strokeScores:{};publishedDraw=data.publishedDraw&&typeof data.publishedDraw==="object"?data.publishedDraw:null;renderAll()}
+async function loadCloud(){setCloud("Chargement cloud...",false);try{const url=`${SUPABASE_URL}/rest/v1/${CLOUD_TABLE}?id=eq.${encodeURIComponent(CLOUD_ROW_ID)}&select=data,updated_at`;const res=await fetch(url,{headers:headers()});if(!res.ok)throw new Error("cloud");const rows=await res.json();if(rows&&rows[0]&&rows[0].data){applyData(rows[0].data);setCloud("Cloud chargé",true)}else{setCloud("Cloud vide",false)}}catch(e){setCloud("Cloud indisponible",false)}}
+function parseDrawText(text){const lines=(text||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);return lines.map((line,i)=>{const m=line.match(/^(\d{1,2})\s*[hH:]\s*(\d{2})\s*(?:[:\-–—]\s*)?(.*)$/);if(m)return{time:`${String(Number(m[1])).padStart(2,"0")}:${m[2]}`,names:(m[3]||"").trim()};return{time:`#${i+1}`,names:line}}).filter(x=>x.names)}
+function renderDraw(){const box=document.getElementById("publicDraw"),status=document.getElementById("drawStatus");const draw=publishedDraw||(history&&history[0]?history[0]:null);box.innerHTML="";if(!draw){box.innerHTML=`<div class="placeholder">Aucun draw publié pour le moment.</div>`;status.textContent="—";return}const rows=draw.groups&&draw.groups.length?draw.groups.map((g,i)=>({time:draw.times&&draw.times[i]?draw.times[i]:(draw.startTime&&i===0?draw.startTime:`#${i+1}`),names:g.join(" / ")})):parseDrawText(draw.whatsapp||"");if(!rows.length){box.innerHTML=`<div class="placeholder">Draw publié vide.</div>`;status.textContent="—";return}rows.forEach(r=>{const div=document.createElement("div");div.className="resultItem";div.innerHTML=`<div class="timeBadge">${esc(r.time)}</div><div class="playersLine">${esc(r.names)}</div>`;box.appendChild(div)});status.textContent=draw.publishedAt?new Date(draw.publishedAt).toLocaleDateString("fr-FR"):"Publié"}
+function getLastScoreDay(){return scoreDays&&scoreDays.length?scoreDays[0]:null}
+function annualDetails(player){const arr=[];scoreDays.forEach(day=>(day.scores||[]).forEach(s=>{if(!s.guest&&s.player===player)arr.push({date:day.date,score:Number(s.stableford||0)})}));return arr.sort((a,b)=>b.score-a.score).slice(0,9)}
+function annualData(){const byPlayer={};players.forEach(p=>byPlayer[p]=[]);scoreDays.forEach(day=>(day.scores||[]).forEach(s=>{if(!s.guest&&byPlayer[s.player])byPlayer[s.player].push({date:day.date,score:Number(s.stableford||0)})}));return players.map(p=>{const stable=byPlayer[p].slice().sort((a,b)=>b.score-a.score).slice(0,9),stableTotal=stable.reduce((sum,x)=>sum+x.score,0),stroke=Number(strokeScores[p]||0);return{player:p,stableCount:stable.length,stableTotal,stroke,total:stableTotal+stroke}}).sort((a,b)=>b.total-a.total)}
+function showAnnualDetail(player){const scores=annualDetails(player);if(!scores.length){alert(`${player}\nAucun score Stableford enregistré.`);return}const worst=scores.length>=9?scores[scores.length-1].score:null;const lines=scores.map((s,i)=>`${i+1}. ${s.score} pts · ${formatDateShort(s.date)}`).join("\n");const note=worst===null?`\n\n${player} a moins de 9 scores : tout nouveau score comptera.`:`\n\nScore à battre pour améliorer le total : ${worst} pts.`;alert(`${player} · Top ${scores.length} Stableford\n\n${lines}${note}`)}
+function renderRankings(){const day=getLastScoreDay();const dayBox=document.getElementById("publicDayRanking"),nearBox=document.getElementById("publicDayNearest");if(!day){dayBox.innerHTML=`<div class="placeholder">Aucune journée enregistrée.</div>`;nearBox.innerHTML=`<div class="placeholder">Aucun nearest du jour enregistré.</div>`;document.getElementById("dayStatus").textContent="—";document.getElementById("dayNearestStatus").textContent="—"}else{const sorted=(day.scores||[]).slice().sort((a,b)=>b.stableford-a.stableford);document.getElementById("dayStatus").textContent=day.date;dayBox.innerHTML=tableHTML(["#","Joueur","SF"],sorted.map((s,i)=>[i+1,esc(s.player+(s.guest?" (invité)":"")),esc(s.stableford)]));const vals=Array.from(new Set((day.nearest||[]).filter(p=>players.includes(p))));document.getElementById("dayNearestStatus").textContent=day.date;nearBox.innerHTML=vals.length?tableHTML(["#","Joueur"],vals.map((p,i)=>[i+1,esc(p)])):`<div class="placeholder">Aucun nearest enregistré pour cette journée.</div>`}const annual=annualData();document.getElementById("publicAnnualRanking").innerHTML=annual.length?tableHTML(["#","Joueur","Top 9","Total"],annual.map((r,i)=>[i+1,`<button class="playerLink" data-player="${esc(r.player)}">${esc(r.player)}</button>`,`${r.stableTotal} (${r.stableCount})`,r.total])):`<div class="placeholder">Aucun classement annuel.</div>`;const counts={};players.forEach(p=>counts[p]=0);scoreDays.forEach(day=>(day.nearest||[]).forEach(p=>{if(counts[p]!==undefined)counts[p]+=1}));const near=Object.entries(counts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);document.getElementById("publicNearestRanking").innerHTML=near.length?tableHTML(["#","Joueur","Nearest"],near.map((r,i)=>[i+1,esc(r[0]),r[1]])):`<div class="placeholder">Aucun nearest enregistré.</div>`}
+function buildPresenceStats(){const totalDays=scoreDays.length,map={};function ensure(name,isGuest){const key=normalizeName(name);if(!key)return null;if(!map[key])map[key]={player:key,count:0,lastDate:"",guest:!!isGuest};if(isGuest&&!players.includes(key))map[key].guest=true;return map[key]}players.forEach(p=>ensure(p,false));guests.forEach(g=>ensure(g,true));scoreDays.forEach(day=>{const seen=new Set();(day.scores||[]).forEach(s=>{const key=normalizeName(s.player);if(!key||seen.has(key))return;seen.add(key);const row=ensure(key,!!s.guest||!players.includes(key));row.count+=1;if(!row.lastDate||String(day.date)>String(row.lastDate))row.lastDate=day.date})});const all=Object.values(map).map(r=>Object.assign({},r,{rate:totalDays?Math.round((r.count/totalDays)*100):0}));return{totalDays,official:all.filter(r=>players.includes(r.player)).sort((a,b)=>b.count-a.count||a.player.localeCompare(b.player)),guests:all.filter(r=>!players.includes(r.player)&&r.count>0).sort((a,b)=>b.count-a.count||a.player.localeCompare(b.player))}}
+function renderStats(){const stats=buildPresenceStats();document.getElementById("statsStatus").textContent=`${stats.totalDays} partie${stats.totalDays>1?"s":""}`;document.getElementById("publicOfficialPresence").innerHTML=stats.official.length?tableHTML(["#","Joueur","Présences","%","Dernière"],stats.official.map((r,i)=>[i+1,esc(r.player),r.count,r.rate+"%",formatDateShort(r.lastDate)])):`<div class="placeholder">Aucune présence officielle.</div>`;document.getElementById("publicGuestPresence").innerHTML=stats.guests.length?tableHTML(["#","Invité","Présences","%","Dernière"],stats.guests.map((r,i)=>[i+1,esc(r.player),r.count,r.rate+"%",formatDateShort(r.lastDate)])):`<div class="placeholder">Aucun invité enregistré.</div>`}
+function renderAll(){renderDraw();renderRankings();renderStats()}
+document.getElementById("btnRefresh").addEventListener("click",loadCloud);document.getElementById("publicAnnualRanking").addEventListener("click",ev=>{const b=ev.target.closest("button[data-player]");if(b)showAnnualDetail(b.dataset.player)});loadCloud();
 </script>
 </body>
 </html>
